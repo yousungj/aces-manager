@@ -1,27 +1,11 @@
 'use client';
 
 import React, { useMemo, useState } from "react";
-import { buildSeatCoverXml } from "../src/templates/aces/seat-cover";
+// ▼ 경로 수정됨: "../src/..." 대신 "../templates/..." 사용
+import { buildSeatCoverXml } from "../templates/aces/seat-cover";
+
 /**
  * ACES File Manager (UI)
- *
- * Current scope:
- * - Folder/Subcategory/Template navigation
- * - Generator input UI (Single + Bulk) + Preview
- *
- * Bulk behavior:
- * - Bulk input = list of Part Numbers only (one per line)
- * - Shared Brand + Part Type are selected once via dropdowns
- * - Deduplicate Part Numbers in bulk (preserve first-seen order)
- *
- * NOTE ABOUT THE RECENT ERROR:
- * Some environments injected a literal carriage-return character into regex literals,
- * causing "Unterminated regular expression" at build time.
- * To harden this file, line splitting is now done WITHOUT regex literals.
- *
- * Next steps:
- * - Upload/Edit template XML (S3)
- * - Generate real ACES XML (Lambda) + Download
  */
 
 type AcesTemplate = {
@@ -52,6 +36,7 @@ type GenerateRow = {
   partNumber: string;
   partTypeId: string;
   brandAaiaId: string;
+  baseVehicleId?: string; // 추가됨
 };
 
 type PreviewState = {
@@ -63,7 +48,6 @@ type PreviewState = {
 };
 
 type BrandOption = { code: string; name: string };
-
 type PartTypeOption = { name: string; id: string };
 
 const BRAND_OPTIONS: BrandOption[] = [
@@ -87,7 +71,6 @@ const PART_TYPE_OPTIONS: PartTypeOption[] = [
   { name: "Windshield Snow Cover", id: "71066" },
 ];
 
-// 이 부분 전체를 복사해서 기존 DEFAULT_TREE 자리에 덮어쓰세요.
 const DEFAULT_TREE: Folder[] = [
   {
     id: "mega",
@@ -185,11 +168,6 @@ function Card({
   );
 }
 
-/**
- * Split text into lines without using regex literals.
- * This avoids build-time "Unterminated regular expression" issues if the file encoding
- * accidentally injects raw CR characters into regex literals.
- */
 function splitLines(text: string): string[] {
   const s = text ?? "";
   const lines: string[] = [];
@@ -197,61 +175,23 @@ function splitLines(text: string): string[] {
 
   for (let i = 0; i < s.length; i++) {
     const ch = s[i];
-
     if (ch === "\n") {
       lines.push(buf);
       buf = "";
       continue;
     }
-
     if (ch === "\r") {
-      // Handle CRLF: if next is \n, skip it.
       if (i + 1 < s.length && s[i + 1] === "\n") i++;
       lines.push(buf);
       buf = "";
       continue;
     }
-
     buf += ch;
   }
-
-  // Push final buffer (even if empty).
   lines.push(buf);
   return lines;
 }
 
-/**
- * Legacy bulk parser (kept for backward-compat + existing tests).
- * Input per line: partNumber,partTypeId,brandAaiaId
- */
-function parseBulk(text: string): GenerateRow[] {
-  const rows: GenerateRow[] = [];
-  const lines = splitLines(text ?? "");
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith("#")) continue;
-
-    const parts = trimmed.split(",").map((x) => x.trim());
-    if (parts.length < 3) continue;
-
-    const [partNumber, partTypeId, brandAaiaId] = parts;
-    if (!partNumber || !partTypeId || !brandAaiaId) continue;
-
-    rows.push({ partNumber, partTypeId, brandAaiaId });
-  }
-
-  return rows;
-}
-
-/**
- * Bulk parser (new behavior):
- * - Bulk text contains ONLY part numbers
- * - One per line (optional: comma-separated on a single line)
- * - Ignore blank lines and comment lines starting with '#'
- * - Deduplicate while preserving order
- */
 function parseBulkParts(text: string): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
@@ -273,7 +213,6 @@ function parseBulkParts(text: string): string[] {
       out.push(t);
     }
   }
-
   return out;
 }
 
@@ -351,18 +290,15 @@ export default function ACESManagerStep1() {
 
   const [mode, setMode] = useState<"single" | "bulk">("single");
 
-  // Single mode: still allows overriding everything per part.
   const [singleForm, setSingleForm] = useState<GenerateRow>({
     partNumber: "",
     partTypeId: PART_TYPE_OPTIONS[0]?.id || "",
     brandAaiaId: BRAND_OPTIONS[0]?.code || "",
   });
 
-  // Bulk mode: shared dropdowns
   const [bulkBrandCode, setBulkBrandCode] = useState<string>(BRAND_OPTIONS[0]?.code || "");
   const [bulkPartTypeId, setBulkPartTypeId] = useState<string>(PART_TYPE_OPTIONS[0]?.id || "");
 
-  // Bulk text: part numbers only
   const [bulkText, setBulkText] = useState<string>(`# Paste Part Numbers (one per line)
 # Lines starting with # are ignored
 BDK-ABC-123
@@ -392,12 +328,11 @@ BDK-DEF-456
         templateName: selectedTpl.name,
         mode: "single",
         rows: [{ partNumber, partTypeId, brandAaiaId }],
-        note: "Preview only. Next step will generate real ACES XML (client-side first, then AWS Lambda).",
+        note: "Preview only. Click 'Generate & download XML' to get the file.",
       });
       return;
     }
 
-    // Bulk mode: part numbers only + shared dropdowns
     if (!bulkBrandCode || !bulkPartTypeId) {
       alert("Select a Brand and Part Type for bulk generation.");
       return;
@@ -420,11 +355,10 @@ BDK-DEF-456
       templateName: selectedTpl.name,
       mode: "bulk",
       rows,
-      note: "Preview only. Later we will generate multiple ACES XML outputs (zip or batch download).",
+      note: "Preview only. Click 'Generate & download XML' to get the file.",
     });
   }
 
-// ▼ 이 함수를 새로 추가하세요!
   function comingSoon(label: string) {
     alert(`${label} 기능은 아직 준비 중입니다.`);
   }
@@ -435,22 +369,17 @@ BDK-DEF-456
       return;
     }
 
-    // 1. 아까 만든 함수를 써서 XML 글자를 만듭니다.
-    // (지금은 모든 카테고리가 이 함수 하나를 같이 씁니다)
     const xmlContent = buildSeatCoverXml(lastPreview.rows);
 
-    // 2. 가상의 파일을 만들어서 다운로드 시킵니다.
     const blob = new Blob([xmlContent], { type: "text/xml" });
     const url = URL.createObjectURL(blob);
     
     const link = document.createElement("a");
     link.href = url;
-    // 파일명 예시: aces_output_날짜.xml
     link.download = `aces_output_${Date.now()}.xml`;
     document.body.appendChild(link);
     link.click();
     
-    // 뒷정리
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
@@ -765,7 +694,6 @@ BDK-DEF-456
                         <button
                           type="button"
                           className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm hover:bg-neutral-50"
-                          // ▼ 여기를 이렇게 고치세요!
                           onClick={handleDownload}
                         >
                           Generate & download XML
@@ -811,99 +739,6 @@ BDK-DEF-456
             <li>We add real template XML storage + generation next (AWS Lambda + S3).</li>
             <li>Then we add bulk outputs (zip/batch) and BaseVehicleId linking.</li>
           </ul>
-        </div>
-      </div>
-
-      {/* Tiny dev-only tests for the bulk parsers (opt-in). */}
-      <BulkParserTests />
-    </div>
-  );
-}
-
-function BulkParserTests() {
-  // Set window.__ACES_RUN_TESTS__ = true in devtools to run these.
-  const shouldRun =
-    typeof window !== "undefined" &&
-    (window as any).__ACES_RUN_TESTS__ === true &&
-    process.env.NODE_ENV !== "production";
-
-  if (!shouldRun) return null;
-
-  const results: Array<{ name: string; ok: boolean; details?: string }> = [];
-
-  function assert(name: string, condition: boolean, details?: string) {
-    results.push({ name, ok: condition, details });
-  }
-
-  try {
-    // Added tests for splitLines (new helper)
-    const sl1 = splitLines("A\nB\n");
-    assert("splitLines: LF", sl1.join("|") === "A|B|", `got=${sl1.join("|")}`);
-
-    const sl2 = splitLines("A\r\nB\r\n");
-    assert("splitLines: CRLF", sl2.join("|") === "A|B|", `got=${sl2.join("|")}`);
-
-    const sl3 = splitLines("A\rB\r");
-    assert("splitLines: CR", sl3.join("|") === "A|B|", `got=${sl3.join("|")}`);
-
-    // Existing tests for legacy parseBulk (kept)
-    const r1 = parseBulk("\n# comment\nA,PT,1\n\n");
-    assert("Legacy: Ignores comments and blanks", r1.length === 1, `len=${r1.length}`);
-    assert(
-      "Legacy: Parses fields",
-      r1[0]?.partNumber === "A" && r1[0]?.partTypeId === "PT" && r1[0]?.brandAaiaId === "1",
-    );
-
-    const r2 = parseBulk("A,PT,1\nB,PT,2\n");
-    assert("Legacy: Parses multiple rows", r2.length === 2, `len=${r2.length}`);
-
-    const r3 = parseBulk("BADROW\nC,PT,3\n");
-    assert("Legacy: Skips invalid rows", r3.length === 1 && r3[0]?.partNumber === "C");
-
-    const r4 = parseBulk("A, PT , 1 \r\nB,PT,2\r\n");
-    assert("Legacy: Handles CRLF and trims spaces", r4.length === 2 && r4[0]?.partTypeId === "PT");
-
-    const r5 = parseBulk("A,,1\n");
-    assert("Legacy: Rejects rows with missing values", r5.length === 0, `len=${r5.length}`);
-
-    const r6 = parseBulk("# only comments\n# again\n");
-    assert("Legacy: All comments => empty", r6.length === 0, `len=${r6.length}`);
-
-    // Tests for parseBulkParts (new behavior)
-    const p1 = parseBulkParts("\n# comment\nABC-1\n\nDEF-2\n");
-    assert("New: Parses part numbers", p1.length === 2 && p1[0] === "ABC-1" && p1[1] === "DEF-2");
-
-    const p2 = parseBulkParts("A, B ,C\n");
-    assert("New: Allows comma-separated", p2.length === 3 && p2[1] === "B");
-
-    const p3 = parseBulkParts("\n\r\n");
-    assert("New: Empty input => empty array", p3.length === 0);
-
-    const p4 = parseBulkParts("A\nA\nB\nA,B\n");
-    assert("New: Deduplicates while preserving order", p4.join(",") === "A,B", `got=${p4.join(",")}`);
-
-    const p5 = parseBulkParts("  A  \n#x\nA\n  B  \n");
-    assert("New: Trims + dedupes", p5.join(",") === "A,B", `got=${p5.join(",")}`);
-  } catch (e: any) {
-    assert("No throw", false, String(e?.message || e));
-  }
-
-  return (
-    <div className="mx-auto max-w-6xl px-4 pb-6">
-      <div className="rounded-2xl border bg-white p-4">
-        <div className="text-sm font-semibold text-neutral-900">Dev tests (Bulk parsers)</div>
-        <div className="mt-2 space-y-1 text-sm">
-          {results.map((t) => (
-            <div key={t.name} className="flex items-start justify-between gap-3">
-              <div className="text-neutral-800">{t.name}</div>
-              <div className={t.ok ? "text-green-700" : "text-red-700"}>{t.ok ? "PASS" : "FAIL"}</div>
-            </div>
-          ))}
-          {results.some((x) => !x.ok) ? (
-            <pre className="mt-3 overflow-auto rounded-xl bg-neutral-50 p-3 text-xs">
-              {JSON.stringify(results, null, 2)}
-            </pre>
-          ) : null}
         </div>
       </div>
     </div>

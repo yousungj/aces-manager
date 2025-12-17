@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 // ▼ 경로 수정됨: "../src/..." 대신 "../templates/..." 사용
-import { buildSeatCoverXml } from "../src/templates/aces/seat-cover";
+import { buildSeatCoverXml } from "../templates/aces/seat-cover";
 
 /**
  * ACES File Manager (UI)

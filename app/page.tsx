@@ -426,8 +426,8 @@ BDK-DEF-456
 
 // ▼ 이 함수를 새로 추가하세요!
   function comingSoon(label: string) {
-  alert(`${label} 기능은 아직 준비 중입니다.`);
-}
+    alert(`${label} 기능은 아직 준비 중입니다.`);
+  }
 
   function handleDownload() {
     if (!lastPreview || !lastPreview.rows.length) {

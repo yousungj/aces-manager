@@ -190,7 +190,7 @@ function Card({
  * This avoids build-time "Unterminated regular expression" issues if the file encoding
  * accidentally injects raw CR characters into regex literals.
  */
-export function splitLines(text: string): string[] {
+function splitLines(text: string): string[] {
   const s = text ?? "";
   const lines: string[] = [];
   let buf = "";
@@ -224,7 +224,7 @@ export function splitLines(text: string): string[] {
  * Legacy bulk parser (kept for backward-compat + existing tests).
  * Input per line: partNumber,partTypeId,brandAaiaId
  */
-export function parseBulk(text: string): GenerateRow[] {
+function parseBulk(text: string): GenerateRow[] {
   const rows: GenerateRow[] = [];
   const lines = splitLines(text ?? "");
 
@@ -252,7 +252,7 @@ export function parseBulk(text: string): GenerateRow[] {
  * - Ignore blank lines and comment lines starting with '#'
  * - Deduplicate while preserving order
  */
-export function parseBulkParts(text: string): string[] {
+function parseBulkParts(text: string): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
   const lines = splitLines(text ?? "");

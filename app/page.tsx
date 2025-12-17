@@ -112,7 +112,7 @@ const DEFAULT_TREE: Folder[] = [
       { id: "swc-s", name: "a. Small-14 inch", templates: [{ id: "tpl-swc-s", name: "Standard XML" }] },
       { id: "swc-m", name: "b. Medium-15 inch", templates: [{ id: "tpl-swc-m", name: "Standard XML" }] },
       { id: "swc-l", name: "c. Large-16 inch", templates: [{ id: "tpl-swc-l", name: "Standard XML" }] },
-      { id: "swc-xl1", name: "d. XL1-bigrig", templates: [{ id: "tpl-swc-xl1", name: "Standard XML" }] },
+      { id: "swc-xl1", name: "d. XL1-BigRig", templates: [{ id: "tpl-swc-xl1", name: "Standard XML" }] },
     ],
   },
   {

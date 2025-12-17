@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from "react";
-
+import { buildSeatCoverXml } from "../src/templates/aces/seat-cover";
 /**
  * ACES File Manager (UI)
  *
@@ -424,10 +424,31 @@ BDK-DEF-456
     });
   }
 
-  function comingSoon(action: string) {
-    alert(
-      `${action} is coming next. We will wire this to real ACES XML generation (and AWS) in the next step(s).`,
-    );
+// ▼ 이 함수를 새로 추가하세요!
+  function handleDownload() {
+    if (!lastPreview || !lastPreview.rows.length) {
+      alert("먼저 'Preview' 버튼을 눌러 데이터를 확인해주세요.");
+      return;
+    }
+
+    // 1. 아까 만든 함수를 써서 XML 글자를 만듭니다.
+    // (지금은 모든 카테고리가 이 함수 하나를 같이 씁니다)
+    const xmlContent = buildSeatCoverXml(lastPreview.rows);
+
+    // 2. 가상의 파일을 만들어서 다운로드 시킵니다.
+    const blob = new Blob([xmlContent], { type: "text/xml" });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.href = url;
+    // 파일명 예시: aces_output_날짜.xml
+    link.download = `aces_output_${Date.now()}.xml`;
+    document.body.appendChild(link);
+    link.click();
+    
+    // 뒷정리
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   const selectedBulkBrandName = useMemo(() => {
@@ -740,7 +761,8 @@ BDK-DEF-456
                         <button
                           type="button"
                           className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm hover:bg-neutral-50"
-                          onClick={() => comingSoon("Generate & download XML")}
+                          // ▼ 여기를 이렇게 고치세요!
+                          onClick={handleDownload}
                         >
                           Generate & download XML
                         </button>

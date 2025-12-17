@@ -87,78 +87,53 @@ const PART_TYPE_OPTIONS: PartTypeOption[] = [
   { name: "Windshield Snow Cover", id: "71066" },
 ];
 
+// 이 부분 전체를 복사해서 기존 DEFAULT_TREE 자리에 덮어쓰세요.
 const DEFAULT_TREE: Folder[] = [
   {
     id: "mega",
-    name: "MEGA",
+    name: "1. Mega",
     children: [
       {
-        id: "mega-seat-covers",
-        name: "Seat Covers",
-        templates: [
-          {
-            id: "tpl-mega-seat-001",
-            name: "ACES Template – MEGA Seat Cover",
-            description: "Template placeholder (edit later)",
-          },
-        ],
+        id: "mega-super",
+        name: "a. Mega_super",
+        templates: [{ id: "tpl-mega-super", name: "Standard XML" }],
       },
       {
-        id: "mega-floor-mats",
-        name: "Floor Mats",
-        templates: [
-          {
-            id: "tpl-mega-mat-001",
-            name: "ACES Template – MEGA Mat",
-            description: "Template placeholder (edit later)",
-          },
-        ],
+        id: "mega-wo-int",
+        name: "b. Mega_WO_Integrated_HR",
+        templates: [{ id: "tpl-mega-wo", name: "Standard XML" }],
       },
     ],
   },
   {
-    id: "mega-no-integrated-seat",
-    name: "MEGA without Integrated Seat",
+    id: "swc",
+    name: "2. SWC",
     children: [
-      {
-        id: "mega-nis-seat-covers",
-        name: "Seat Covers (No Integrated)",
-        templates: [
-          {
-            id: "tpl-mega-nis-001",
-            name: "ACES Template – No Integrated Seat",
-            description: "Template placeholder (edit later)",
-          },
-        ],
-      },
+      { id: "swc-s", name: "a. Small", templates: [{ id: "tpl-swc-s", name: "Standard XML" }] },
+      { id: "swc-m", name: "b. Medium", templates: [{ id: "tpl-swc-m", name: "Standard XML" }] },
+      { id: "swc-l", name: "c. Large", templates: [{ id: "tpl-swc-l", name: "Standard XML" }] },
+      { id: "swc-xl1", name: "d. XL1", templates: [{ id: "tpl-swc-xl1", name: "Standard XML" }] },
     ],
   },
   {
     id: "car-cover",
-    name: "Car Cover",
+    name: "3. Car Cover",
     children: [
-      {
-        id: "car-cover-suv",
-        name: "SUV Cover",
-        templates: [
-          {
-            id: "tpl-cover-suv-001",
-            name: "ACES Template – Car Cover (SUV)",
-            description: "Template placeholder (edit later)",
-          },
-        ],
-      },
-      {
-        id: "car-cover-sedan",
-        name: "Sedan Cover",
-        templates: [
-          {
-            id: "tpl-cover-sedan-001",
-            name: "ACES Template – Car Cover (Sedan)",
-            description: "Template placeholder (edit later)",
-          },
-        ],
-      },
+      { id: "cc-s", name: "a. Small", templates: [{ id: "tpl-cc-s", name: "Standard XML" }] },
+      { id: "cc-m", name: "b. Medium", templates: [{ id: "tpl-cc-m", name: "Standard XML" }] },
+      { id: "cc-l", name: "c. Large", templates: [{ id: "tpl-cc-l", name: "Standard XML" }] },
+      { id: "cc-xl1", name: "d. XL1", templates: [{ id: "tpl-cc-xl1", name: "Standard XML" }] },
+      { id: "cc-xl2", name: "e. XL2", templates: [{ id: "tpl-cc-xl2", name: "Standard XML" }] },
+    ],
+  },
+  {
+    id: "suv-cover",
+    name: "4. SUV Cover",
+    children: [
+      { id: "suv-l", name: "a. Large", templates: [{ id: "tpl-suv-l", name: "Standard XML" }] },
+      { id: "suv-xl1", name: "b. XL1", templates: [{ id: "tpl-suv-xl1", name: "Standard XML" }] },
+      { id: "suv-xl2", name: "c. XL2", templates: [{ id: "tpl-suv-xl2", name: "Standard XML" }] },
+      { id: "suv-xl3", name: "d. XL3", templates: [{ id: "tpl-suv-xl3", name: "Standard XML" }] },
     ],
   },
 ];

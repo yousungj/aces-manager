@@ -1,9 +1,24 @@
 'use client';
 
-import React, { useMemo, useState } from "react";
-// Path fixed: use "../templates/..." (do not include "../src/")
-import { buildSeatCoverXml } from "../templates/aces/seat-cover";
+import type { Metadata } from "next";
+import React from "react";
 
+export const metadata: Metadata = {
+  title: "ACES Manager",
+  description: "Automotive ACES XML Generator",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
 /**
  * ACES File Manager (UI)
  */

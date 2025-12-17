@@ -1,5 +1,9 @@
-// src/app/layout.tsx
-import './globals.css';
+import "./globals.css";
+
+export const metadata = {
+  title: "ACES File Manager",
+  description: "ACES XML template generator",
+};
 
 export default function RootLayout({
   children,

@@ -337,12 +337,20 @@ export default function ACESManagerStep1() {
             <h1 className="text-6xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent" style={{ letterSpacing: '-0.04em' }}>ACES Manager</h1>
             <p className="text-center text-gray-500 text-lg">Powerful XML generation for automotive parts</p>
           </div>
-          <Link 
-            href="/custom-builder" 
-            className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap ml-6"
-          >
-            🛠️ Custom Builder
-          </Link>
+          <div className="flex gap-3">
+            <Link 
+              href="/template-editor" 
+              className="apple-btn apple-btn-secondary px-6 py-3 whitespace-nowrap"
+            >
+              📝 Edit Templates
+            </Link>
+            <Link 
+              href="/custom-builder" 
+              className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap"
+            >
+              🛠️ Custom Builder
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -7,7 +7,48 @@ Your code has been successfully:
 - ✅ Committed to Git
 - ✅ Pushed to GitHub: https://github.com/yousungj/aces-manager
 
-## 🚀 Deploy to Vercel (Recommended)
+## 🚀 Deploy to AWS Amplify
+
+### Setup Instructions
+
+1. **Go to AWS Amplify Console**
+   - Visit [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
+   - Sign in with your AWS account
+
+2. **Create New App**
+   - Click "New app" → "Host web app"
+   - Select "GitHub" as your repository provider
+   - Authorize AWS Amplify to access your GitHub account
+
+3. **Connect Repository**
+   - Select repository: `yousungj/aces-manager`
+   - Select branch: `main`
+   - Click "Next"
+
+4. **Configure Build Settings**
+   - Amplify will auto-detect the `amplify.yml` file
+   - App name: `aces-manager` (or your preferred name)
+   - Environment: `production`
+   - Click "Next"
+
+5. **Review and Deploy**
+   - Review your settings
+   - Click "Save and deploy"
+   - Wait 3-5 minutes for initial deployment
+
+6. **Get Your Live URL**
+   - You'll get a URL like: `https://main.xxxxx.amplifyapp.com`
+   - You can add a custom domain in Amplify settings
+
+### Build Configuration
+
+Your project includes `amplify.yml` which:
+- ✅ Installs dependencies with `npm ci`
+- ✅ Runs `extract-vehicle-ids.js` prebuild script
+- ✅ Builds Next.js production bundle
+- ✅ Caches node_modules and .next for faster builds
+
+## 🚀 Alternative: Deploy to Vercel
 
 Vercel is the recommended platform for Next.js applications (created by the Next.js team).
 

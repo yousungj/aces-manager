@@ -164,19 +164,41 @@ export default function ACESManagerStep1() {
       return;
     }
 
-    // Generate XML using the mapped template
-    const xmlContent = templateFunc(rows);
+    // For bulk mode, generate and download separate XML for each part number
+    if (mode === "bulk") {
+      rows.forEach((row, index) => {
+        // Generate XML for this part number
+        const xmlContent = templateFunc([row]);
+        
+        // Download with delay to avoid browser blocking multiple downloads
+        setTimeout(() => {
+          const blob = new Blob([xmlContent], { type: 'application/xml' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `aces-${row.partNumber}-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, index * 300); // 300ms delay between downloads
+      });
+      
+      alert(`Generating ${rows.length} XML files. Please wait...`);
+    } else {
+      // Single mode - generate one XML file
+      const xmlContent = templateFunc(rows);
 
-    // Download the XML file
-    const blob = new Blob([xmlContent], { type: 'application/xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      const blob = new Blob([xmlContent], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleAttachVehicles = () => {

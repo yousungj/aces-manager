@@ -1,5 +1,5 @@
 // AWS Lambda function for managing submission history
-// Deploy this to AWS Lambda and connect it to API Gateway
+// Node.js 18 Lambda runtime includes AWS SDK v2
 
 const AWS = require('aws-sdk');
 const dynamodb = new AWS.DynamoDB.DocumentClient();

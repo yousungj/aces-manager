@@ -2,13 +2,20 @@
 
 ## Step 1: Create DynamoDB Table
 
-1. Go to AWS DynamoDB Console
-2. Create table with:
-   - Table name: `aces-submission-history`
-   - Partition key: `id` (String)
-   - Create a Global Secondary Index:
-     - Index name: `templateId-index`
-     - Partition key: `templateId` (String)
+1. Go to AWS DynamoDB Console: https://console.aws.amazon.com/dynamodb
+2. Click **"Create table"**
+3. Configure table settings:
+   - **Table name**: `aces-submission-history`
+   - **Partition key**: `id` (Type: String)
+4. Scroll down to **"Secondary indexes"** section
+5. Click **"Create global index"**
+6. Configure the Global Secondary Index:
+   - **Partition key**: `templateId` (Type: String)
+   - **Index name**: `templateId-index` (auto-fills)
+   - Keep other defaults
+7. Click **"Create table"**
+
+**Note**: You can also add the GSI after table creation by going to the table → Indexes tab → Create index
 
 ## Step 2: Create Lambda Function
 

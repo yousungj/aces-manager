@@ -44,6 +44,7 @@ export default function CustomBuilder() {
   
   const [selectedVehicles, setSelectedVehicles] = useState<SelectedVehicle[]>([]);
   const [currentVehicle, setCurrentVehicle] = useState<VehicleData | null>(null);
+  const [multiSelectVehicles, setMultiSelectVehicles] = useState<VehicleData[]>([]);
   const [yearSelection, setYearSelection] = useState<number[]>([]);
   const [allYearsMode, setAllYearsMode] = useState(true);
 
@@ -90,31 +91,44 @@ export default function CustomBuilder() {
   }, [vehicleData]);
 
   const handleAddVehicle = () => {
-    if (!currentVehicle) {
-      alert("Please select a vehicle first!");
-      return;
+    if (allYearsMode) {
+      // Multi-select mode for All Years
+      if (multiSelectVehicles.length === 0) {
+        alert("Please select at least one vehicle!");
+        return;
+      }
+
+      const newVehicles = multiSelectVehicles.map(v => ({
+        vehicle: v,
+        selectedYears: v.years.map(y => y.year),
+        allYears: true
+      }));
+
+      setSelectedVehicles([...selectedVehicles, ...newVehicles]);
+      setMultiSelectVehicles([]);
+      setSearchTerm("");
+    } else {
+      // Single-select mode for Select Years
+      if (!currentVehicle) {
+        alert("Please select a vehicle first!");
+        return;
+      }
+
+      if (yearSelection.length === 0) {
+        alert("Please select at least one year!");
+        return;
+      }
+
+      setSelectedVehicles([...selectedVehicles, {
+        vehicle: currentVehicle,
+        selectedYears: yearSelection,
+        allYears: false
+      }]);
+
+      setCurrentVehicle(null);
+      setYearSelection([]);
+      setSearchTerm("");
     }
-
-    const yearsToAdd = allYearsMode 
-      ? currentVehicle.years.map(y => y.year)
-      : yearSelection;
-    
-    if (yearsToAdd.length === 0) {
-      alert("Please select at least one year!");
-      return;
-    }
-
-    setSelectedVehicles([...selectedVehicles, {
-      vehicle: currentVehicle,
-      selectedYears: yearsToAdd,
-      allYears: allYearsMode
-    }]);
-
-    // Reset
-    setCurrentVehicle(null);
-    setYearSelection([]);
-    setAllYearsMode(true);
-    setSearchTerm("");
   };
 
   const handleRemoveVehicle = (index: number) => {
@@ -126,6 +140,15 @@ export default function CustomBuilder() {
       setYearSelection(yearSelection.filter(y => y !== year));
     } else {
       setYearSelection([...yearSelection, year]);
+    }
+  };
+
+  const toggleVehicleSelection = (vehicle: VehicleData) => {
+    const isSelected = multiSelectVehicles.some(v => v.make === vehicle.make && v.model === vehicle.model);
+    if (isSelected) {
+      setMultiSelectVehicles(multiSelectVehicles.filter(v => !(v.make === vehicle.make && v.model === vehicle.model)));
+    } else {
+      setMultiSelectVehicles([...multiSelectVehicles, vehicle]);
     }
   };
 
@@ -336,67 +359,148 @@ export default function CustomBuilder() {
                     </select>
                   </div>
 
-                  {currentVehicle && (
-                    <>
-                      {/* Year Selection Mode */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-3">Year Selection</label>
-                        <div className="flex gap-3">
-                          <button
-                            onClick={() => setAllYearsMode(true)}
-                            className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
-                              allYearsMode 
-                                ? 'bg-blue-500 text-white' 
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                          >
-                            All Years
-                          </button>
-                          <button
-                            onClick={() => setAllYearsMode(false)}
-                            className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
-                              !allYearsMode 
-                                ? 'bg-blue-500 text-white' 
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                          >
-                            Select Years
-                          </button>
-                        </div>
-                      </div>
+{/* Year Selection Mode */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Year Selection Mode</label>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          setAllYearsMode(true);
+                          setCurrentVehicle(null);
+                          setYearSelection([]);
+                        }}
+                        className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
+                          allYearsMode 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        All Years (Multi-Select)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAllYearsMode(false);
+                          setMultiSelectVehicles([]);
+                        }}
+                        className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
+                          !allYearsMode 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Select Years (Single)
+                      </button>
+                    </div>
+                  </div>
 
-                      {/* Year Grid (only show if not all years mode) */}
-                      {!allYearsMode && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-3">
-                            Available Years for {currentVehicle.make} {currentVehicle.model}
-                          </label>
-                          <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
-                            {currentVehicle.years.map(yearData => (
-                              <button
-                                key={yearData.year}
-                                onClick={() => toggleYear(yearData.year)}
-                                className={`px-3 py-2 rounded-lg font-medium transition-all ${
-                                  yearSelection.includes(yearData.year)
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  {allYearsMode ? (
+                    /* Multi-select vehicle list for All Years mode */
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select Vehicles {searchTerm && `(${filteredVehicles.length} results)`}
+                      </label>
+                      <div className="border border-gray-200 rounded-xl bg-white/50 max-h-80 overflow-y-auto">
+                        {filteredVehicles.length === 0 ? (
+                          <p className="text-center py-8 text-gray-500">No vehicles found</p>
+                        ) : (
+                          filteredVehicles.map(v => {
+                            const isSelected = multiSelectVehicles.some(sv => sv.make === v.make && sv.model === v.model);
+                            return (
+                              <label
+                                key={`${v.make}-${v.model}`}
+                                className={`flex items-center px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-blue-50 transition-colors ${
+                                  isSelected ? 'bg-blue-50' : ''
                                 }`}
                               >
-                                {yearData.year}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => toggleVehicleSelection(v)}
+                                  className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                                />
+                                <span className="ml-3 flex-1 font-medium text-gray-900">
+                                  {v.make} {v.model}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                  {v.years.length} years
+                                </span>
+                              </label>
+                            );
+                          })
+                        )}
+                      </div>
+                      {multiSelectVehicles.length > 0 && (
+                        <p className="mt-2 text-sm text-blue-600 font-medium">
+                          {multiSelectVehicles.length} vehicle(s) selected
+                        </p>
                       )}
+                    </div>
+                  ) : (
+                    /* Single-select dropdown for Select Years mode */
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Select Vehicle {searchTerm && `(${filteredVehicles.length} results)`}
+                        </label>
+                        <select 
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50"
+                          value={currentVehicle ? `${currentVehicle.make}-${currentVehicle.model}` : ""}
+                          onChange={e => {
+                            const [make, model] = e.target.value.split('-');
+                            const vehicles = vehicleData.get(make);
+                            const vehicle = vehicles?.find(v => v.model === model);
+                            setCurrentVehicle(vehicle || null);
+                            setYearSelection([]);
+                          }}
+                          disabled={filteredVehicles.length === 0}
+                        >
+                          <option value="">Choose a vehicle...</option>
+                          {filteredVehicles.map(v => (
+                            <option key={`${v.make}-${v.model}`} value={`${v.make}-${v.model}`}>
+                              {v.make} {v.model} ({v.years.length} years)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                      <button
-                        onClick={handleAddVehicle}
-                        className="w-full apple-btn apple-btn-secondary px-6 py-3"
-                      >
-                        Add Vehicle
-                      </button>
+                      {currentVehicle && (
+                        <>
+                          {/* Year Grid */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                              Available Years for {currentVehicle.make} {currentVehicle.model}
+                            </label>
+                            <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                              {currentVehicle.years.map(yearData => (
+                                <button
+                                  key={yearData.year}
+                                  onClick={() => toggleYear(yearData.year)}
+                                  className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                                    yearSelection.includes(yearData.year)
+                                      ? 'bg-blue-500 text-white'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                  }`}
+                                >
+                                  {yearData.year}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
+
+                  <button
+                    onClick={handleAddVehicle}
+                    className="w-full apple-btn apple-btn-primary px-6 py-4 text-lg"
+                    disabled={allYearsMode ? multiSelectVehicles.length === 0 : !currentVehicle || yearSelection.length === 0}
+                  >
+                    {allYearsMode 
+                      ? `Add ${multiSelectVehicles.length} Vehicle${multiSelectVehicles.length !== 1 ? 's' : ''} (All Years)`
+                      : `Add Vehicle (${yearSelection.length} year${yearSelection.length !== 1 ? 's' : ''})`
+                    }
+                  </button>
                 </div>
 
                 {/* Info Box */}

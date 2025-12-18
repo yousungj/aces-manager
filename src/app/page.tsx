@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useMemo, useState } from "react";
-import { buildSeatCoverXml } from "../templates/aces/seat-cover";
+import { getTemplateForSubcategory } from "../templates/template-registry";
 
-type AcesTemplate = { id: string; name: string; description?: string };
-type Subcategory = { id: string; name: string; templates: AcesTemplate[] };
+type Subcategory = { id: string; name: string; description?: string };
 type Folder = { id: string; name: string; children: Subcategory[] };
-type PathState = { level1: string | null; level2: string | null; template: string | null };
+type PathState = { level1: string | null; level2: string | null };
 type GenerateRow = { partNumber: string; partTypeId: string; brandAaiaId: string; baseVehicleId?: string };
 
 type PreviewState = {
@@ -43,27 +42,27 @@ const PART_TYPE_OPTIONS: PartTypeOption[] = [
 
 const DEFAULT_TREE: Folder[] = [
   { id: "mega", name: "1. Mega", children: [
-      { id: "mega-super", name: "a. Mega_super", templates: [{ id: "tpl-mega-super", name: "Standard XML" }] },
-      { id: "mega-wo-int", name: "b. Mega_WO_Integrated_HR", templates: [{ id: "tpl-mega-wo", name: "Standard XML" }] },
+      { id: "mega-super", name: "a. Mega_super" },
+      { id: "mega-wo-int", name: "b. Mega_WO_Integrated_HR" },
     ]},
   { id: "swc", name: "2. SWC", children: [
-      { id: "swc-s", name: "a. Small-14 inch", templates: [{ id: "tpl-swc-s", name: "Standard XML" }] },
-      { id: "swc-m", name: "b. Medium-15 inch", templates: [{ id: "tpl-swc-m", name: "Standard XML" }] },
-      { id: "swc-l", name: "c. Large-16 inch", templates: [{ id: "tpl-swc-l", name: "Standard XML" }] },
-      { id: "swc-xl1", name: "d. XL1-BigRig", templates: [{ id: "tpl-swc-xl1", name: "Standard XML" }] },
+      { id: "swc-s", name: "a. Small-14 inch" },
+      { id: "swc-m", name: "b. Medium-15 inch" },
+      { id: "swc-l", name: "c. Large-16 inch" },
+      { id: "swc-xl1", name: "d. XL1-BigRig" },
     ]},
   { id: "car-cover", name: "3. Car Cover", children: [
-      { id: "cc-s", name: "a. Small", templates: [{ id: "tpl-cc-s", name: "Standard XML" }] },
-      { id: "cc-m", name: "b. Medium", templates: [{ id: "tpl-cc-m", name: "Standard XML" }] },
-      { id: "cc-l", name: "c. Large", templates: [{ id: "tpl-cc-l", name: "Standard XML" }] },
-      { id: "cc-xl1", name: "d. XL1", templates: [{ id: "tpl-cc-xl1", name: "Standard XML" }] },
-      { id: "cc-xl2", name: "e. XL2", templates: [{ id: "tpl-cc-xl2", name: "Standard XML" }] },
+      { id: "cc-s", name: "a. Small" },
+      { id: "cc-m", name: "b. Medium" },
+      { id: "cc-l", name: "c. Large" },
+      { id: "cc-xl1", name: "d. XL1" },
+      { id: "cc-xl2", name: "e. XL2" },
     ]},
   { id: "suv-cover", name: "4. SUV Cover", children: [
-      { id: "suv-l", name: "a. Large", templates: [{ id: "tpl-suv-l", name: "Standard XML" }] },
-      { id: "suv-xl1", name: "b. XL1", templates: [{ id: "tpl-suv-xl1", name: "Standard XML" }] },
-      { id: "suv-xl2", name: "c. XL2", templates: [{ id: "tpl-suv-xl2", name: "Standard XML" }] },
-      { id: "suv-xl3", name: "d. XL3", templates: [{ id: "tpl-suv-xl3", name: "Standard XML" }] },
+      { id: "suv-l", name: "a. Large" },
+      { id: "suv-xl1", name: "b. XL1" },
+      { id: "suv-xl2", name: "c. XL2" },
+      { id: "suv-xl3", name: "d. XL3" },
     ]},
 ];
 
@@ -104,14 +103,14 @@ function parseBulkParts(text: string): string[] {
 }
 
 export default function ACESManagerStep1() {
-  const [tree] = useState<Folder[]>(() => {
+  const [tree, setTree] = useState<Folder[]>(() => {
     try {
       const saved = localStorage.getItem("aces_tree_v1");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });
 
-  const [path, setPath] = useState<PathState>({ level1: null, level2: null, template: null });
+  const [path, setPath] = useState<PathState>({ level1: null, level2: null });
   const [mode, setMode] = useState<"single" | "bulk">("single");
   const [singlePartNumber, setSinglePartNumber] = useState("");
   const [singleBrandCode, setSingleBrandCode] = useState("");
@@ -124,10 +123,7 @@ export default function ACESManagerStep1() {
   const level1 = useMemo(() => tree, [tree]);
   const selectedL1 = useMemo(() => level1.find(x => x.id === path.level1) || null, [level1, path.level1]);
   const level2 = useMemo(() => selectedL1?.children || [], [selectedL1]);
-  const selectedL2 = useMemo(() => level2.find(x => x.id === path.level2) || null, [level2, path.level2]);
-  const templates = useMemo(() => selectedL2?.templates || [], [selectedL2]);
-
-  const selectedTemplate = useMemo(() => templates.find(t => t.id === path.template) || null, [templates, path.template]);
+  const selectedTemplate = useMemo(() => level2.find(x => x.id === path.level2) || null, [level2, path.level2]);
   const selectedBulkBrandName = BRAND_OPTIONS.find(b => b.code === bulkBrandCode)?.name || "";
   const selectedBulkPartTypeName = PART_TYPE_OPTIONS.find(p => p.id === bulkPartTypeId)?.name || "";
 
@@ -138,7 +134,7 @@ export default function ACESManagerStep1() {
       : parseBulkParts(bulkText).map(pn => ({ partNumber: pn, brandAaiaId: bulkBrandCode, partTypeId: bulkPartTypeId }));
     
     setLastPreview({
-      templateId: path.template || "unknown",
+      templateId: path.level2 || "unknown",
       templateName: selectedTemplate?.name || "Unknown",
       mode,
       rows,
@@ -146,33 +142,67 @@ export default function ACESManagerStep1() {
     });
   };
 
-  const handleDownload = () => {
-    alert("다운로드 기능은 아직 구현 중이에요! 😅");
+  const handleGenerate = () => {
+    if (!selectedTemplate) {
+      alert("Please select a template first!");
+      return;
+    }
+
+    const rows: GenerateRow[] = mode === "single" 
+      ? [{ partNumber: singlePartNumber, brandAaiaId: singleBrandCode, partTypeId: singlePartTypeId }]
+      : parseBulkParts(bulkText).map(pn => ({ partNumber: pn, brandAaiaId: bulkBrandCode, partTypeId: bulkPartTypeId }));
+
+    if (rows.length === 0 || !rows[0].partNumber) {
+      alert("Please enter at least one part number!");
+      return;
+    }
+
+    // Get the template function for the selected subcategory
+    const templateFunc = getTemplateForSubcategory(selectedTemplate.id);
+    if (!templateFunc) {
+      alert(`No template configured for ${selectedTemplate.name}. Please contact administrator.`);
+      return;
+    }
+
+    // Generate XML using the mapped template
+    const xmlContent = templateFunc(rows);
+
+    // Download the XML file
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
-  const comingSoon = (feature: string) => {
-    alert(`${feature} - 곧 추가될 기능입니다!`);
+  const handleAttachVehicles = () => {
+    alert("Attach Vehicles - Feature coming soon!");
   };
 
   return (
-    <div className="min-h-screen bg-base-200">
-      <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-4xl font-bold text-center mb-8 text-primary">ACES File Manager</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-6xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent" style={{ letterSpacing: '-0.04em' }}>ACES Manager</h1>
+        <p className="text-center text-gray-500 mb-12 text-lg">Powerful XML generation for automotive parts</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* 왼쪽: 폴더 트리 */}
           <div className="lg:col-span-1">
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">폴더 선택</h2>
+            <div className="glass-card rounded-3xl p-6">
+              <div>
+                <h2 className="text-2xl font-semibold mb-6 text-gray-900" style={{ letterSpacing: '-0.03em' }}>Templates</h2>
                 <div className="space-y-4">
                   {level1.map(folder => (
                     <div key={folder.id}>
                       <button
-                        onClick={() => setPath({ level1: folder.id, level2: null, template: null })}
+                        onClick={() => setPath({ level1: folder.id, level2: null })}
                         className={classNames(
-                          "w-full text-left p-4 rounded-lg transition",
-                          path.level1 === folder.id ? "bg-primary text-white" : "bg-base-200 hover:bg-base-300"
+                          "w-full text-left px-5 py-4 font-medium folder-btn",
+                          path.level1 === folder.id ? "folder-btn-active" : "folder-btn-inactive"
                         )}
                       >
                         {folder.name}
@@ -180,27 +210,14 @@ export default function ACESManagerStep1() {
                       {path.level1 === folder.id && level2.map(sub => (
                         <div key={sub.id} className="ml-6 mt-2">
                           <button
-                            onClick={() => setPath(prev => ({ ...prev, level2: sub.id, template: null }))}
+                            onClick={() => setPath(prev => ({ ...prev, level2: sub.id }))}
                             className={classNames(
-                              "w-full text-left p-3 rounded-lg transition",
-                              path.level2 === sub.id ? "bg-secondary text-white" : "bg-base-200 hover:bg-base-300"
+                              "w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium",
+                              path.level2 === sub.id ? "bg-blue-500 text-white" : "bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent"
                             )}
                           >
                             {sub.name}
                           </button>
-                          {path.level2 === sub.id && templates.map(tpl => (
-                            <div key={tpl.id} className="ml-6 mt-1">
-                              <button
-                                onClick={() => setPath(prev => ({ ...prev, template: tpl.id }))}
-                                className={classNames(
-                                  "w-full text-left p-2 rounded transition text-sm",
-                                  path.template === tpl.id ? "bg-accent text-white" : "hover:bg-base-300"
-                                )}
-                              >
-                                {tpl.name}
-                              </button>
-                            </div>
-                          ))}
                         </div>
                       ))}
                     </div>
@@ -213,55 +230,55 @@ export default function ACESManagerStep1() {
           {/* 오른쪽: 설정 및 생성 */}
           <div className="lg:col-span-2 space-y-6">
             {selectedTemplate ? (
-              <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                  <h2 className="card-title">템플릿: {selectedTemplate.name}</h2>
+              <div className="glass-card rounded-3xl p-8">
+                <div>
+                  <h2 className="text-3xl font-semibold mb-6 text-gray-900" style={{ letterSpacing: '-0.03em' }}>Generate XML</h2>
+                  <p className="text-gray-500 mb-6">Template: {selectedTemplate.name}</p>
 
-                  <div className="tabs tabs-boxed mb-6">
-                    <button onClick={() => setMode("single")} className={classNames("tab", mode === "single" && "tab-active")}>Single</button>
-                    <button onClick={() => setMode("bulk")} className={classNames("tab", mode === "bulk" && "tab-active")}>Bulk</button>
+                  <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl mb-8 inline-flex">
+                    <button onClick={() => setMode("single")} className={classNames("px-6 py-2.5 rounded-xl font-medium transition-all duration-200", mode === "single" ? "bg-white text-gray-900 shadow-md" : "text-gray-600 hover:text-gray-900")}>Single</button>
+                    <button onClick={() => setMode("bulk")} className={classNames("px-6 py-2.5 rounded-xl font-medium transition-all duration-200", mode === "bulk" ? "bg-white text-gray-900 shadow-md" : "text-gray-600 hover:text-gray-900")}>Bulk</button>
                   </div>
 
                   {mode === "single" ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <input type="text" placeholder="Part Number" className="input input-bordered" value={singlePartNumber} onChange={e => setSinglePartNumber(e.target.value)} />
-                      <select className="select select-bordered" value={singleBrandCode} onChange={e => setSingleBrandCode(e.target.value)}>
-                        <option value="">Brand 선택</option>
+                      <input type="text" placeholder="Part Number" className="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50" value={singlePartNumber} onChange={e => setSinglePartNumber(e.target.value)} />
+                      <select className="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50" value={singleBrandCode} onChange={e => setSingleBrandCode(e.target.value)}>
+                        <option value="">Select Brand</option>
                         {BRAND_OPTIONS.map(b => <option key={b.code} value={b.code}>{b.code} - {b.name}</option>)}
                       </select>
-                      <select className="select select-bordered" value={singlePartTypeId} onChange={e => setSinglePartTypeId(e.target.value)}>
-                        <option value="">Part Type 선택</option>
+                      <select className="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50" value={singlePartTypeId} onChange={e => setSinglePartTypeId(e.target.value)}>
+                        <option value="">Select Part Type</option>
                         {PART_TYPE_OPTIONS.map(p => <option key={p.id} value={p.id}>{p.name} ({p.id})</option>)}
                       </select>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <select className="select select-bordered" value={bulkBrandCode} onChange={e => setBulkBrandCode(e.target.value)}>
+                        <select className="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50" value={bulkBrandCode} onChange={e => setBulkBrandCode(e.target.value)}>
                           {BRAND_OPTIONS.map(b => <option key={b.code} value={b.code}>{b.code} - {b.name}</option>)}
                         </select>
-                        <select className="select select-bordered" value={bulkPartTypeId} onChange={e => setBulkPartTypeId(e.target.value)}>
+                        <select className="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50" value={bulkPartTypeId} onChange={e => setBulkPartTypeId(e.target.value)}>
                           {PART_TYPE_OPTIONS.map(p => <option key={p.id} value={p.id}>{p.name} ({p.id})</option>)}
                         </select>
                       </div>
-                      <div className="alert alert-info">
-                        <span>Bulk 적용: Brand={bulkBrandCode} ({selectedBulkBrandName}), PartType={bulkPartTypeId} ({selectedBulkPartTypeName})</span>
+                      <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 text-sm text-blue-800">
+                        <span>Bulk settings: Brand={bulkBrandCode} ({selectedBulkBrandName}), PartType={bulkPartTypeId} ({selectedBulkPartTypeName})</span>
                       </div>
-                      <textarea className="textarea textarea-bordered w-full h-48 font-mono text-sm" placeholder="Part Number 한 줄씩 또는 콤마로 구분" value={bulkText} onChange={e => setBulkText(e.target.value)} />
+                      <textarea className="w-full h-48 px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-mono text-sm bg-white/50 resize-none" placeholder="One part number per line or comma-separated" value={bulkText} onChange={e => setBulkText(e.target.value)} />
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                    <button onClick={previewGeneration} className="btn btn-primary">Preview</button>
-                    <button onClick={handleDownload} className="btn btn-success">Generate & Download</button>
-                    <button onClick={() => comingSoon("템플릿 업로드")} className="btn btn-neutral">Upload Template</button>
-                    <button onClick={() => comingSoon("BaseVehicle 연결")} className="btn btn-neutral">Attach Vehicles</button>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-8">
+                    <button onClick={previewGeneration} className="apple-btn apple-btn-secondary px-6 py-3.5">Preview</button>
+                    <button onClick={handleGenerate} className="apple-btn apple-btn-primary px-6 py-3.5">Generate & Download</button>
+                    <button onClick={handleAttachVehicles} className="apple-btn apple-btn-secondary px-6 py-3.5">Attach Vehicles</button>
                   </div>
 
                   {lastPreview && (
-                    <div className="mt-6">
-                      <div className="alert alert-success">Preview 생성 완료!</div>
-                      <pre className="bg-base-200 p-4 rounded-lg overflow-auto text-xs mt-2">
+                    <div className="mt-8">
+                      <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-sm text-green-800 font-medium mb-4">✓ Preview generated successfully!</div>
+                      <pre className="bg-gray-50 p-5 rounded-2xl overflow-auto text-xs border border-gray-200">
                         {JSON.stringify(lastPreview, null, 2)}
                       </pre>
                     </div>
@@ -269,18 +286,20 @@ export default function ACESManagerStep1() {
                 </div>
               </div>
             ) : (
-              <div className="alert alert-warning">
-                <span>왼쪽에서 폴더 → 서브카테고리 → 템플릿을 차례대로 선택해주세요!</span>
+              <div className="glass-card rounded-3xl p-8 text-center">
+                <div className="text-5xl mb-4">📁</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Select a template</h3>
+                <p className="text-gray-500">Choose Folder → Template from the left panel</p>
               </div>
             )}
 
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h3 className="card-title">Why this is Step 1</h3>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>폴더/템플릿 네비게이션 먼저 완성</li>
-                  <li>실제 템플릿 저장 + 생성 기능 추가 예정 (AWS Lambda + S3)</li>
-                  <li>마지막으로 벌크 출력 + BaseVehicle 연결</li>
+            <div className="glass-card rounded-3xl p-6">
+              <div>
+                <h3 className="text-xl font-semibold mb-4 text-gray-900" style={{ letterSpacing: '-0.02em' }}>Development Progress</h3>
+                <ul className="space-y-2.5 text-gray-600">
+                  <li className="flex items-start"><span className="text-green-500 mr-2 text-lg">✓</span><span>Folder/template navigation completed</span></li>
+                  <li className="flex items-start"><span className="text-blue-500 mr-2 text-lg">◉</span><span>Template save + generation features coming soon (AWS Lambda + S3)</span></li>
+                  <li className="flex items-start"><span className="text-gray-400 mr-2 text-lg">○</span><span>Finally bulk output + BaseVehicle linking</span></li>
                 </ul>
               </div>
             </div>

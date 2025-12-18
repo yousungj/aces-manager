@@ -2,19 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-50 via-white to-gray-100;
+    font-feature-settings: 'cv11', 'ss01';
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+@layer components {
+  /* Apple-style glassmorphism card */
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-2xl shadow-gray-200/50;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card:hover {
+    @apply shadow-2xl border-white/40;
+    transform: translateY(-4px) scale(1.02);
+  }
+  
+  /* Apple-style buttons */
+  .apple-btn {
+    @apply rounded-full font-medium transition-all duration-300 shadow-lg;
+    font-size: 0.9375rem;
+    letter-spacing: -0.022em;
+  }
+  
+  .apple-btn-primary {
+    @apply bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-blue-500/50;
+  }
+  
+  .apple-btn-secondary {
+    @apply bg-white/80 hover:bg-white text-gray-900 border border-gray-200/50 shadow-gray-200/50;
+  }
+  
+  /* Smooth folder button */
+  .folder-btn {
+    @apply transition-all duration-300 rounded-2xl;
+  }
+  
+  .folder-btn-active {
+    @apply bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-xl shadow-blue-500/30;
+  }
+  
+  .folder-btn-inactive {
+    @apply bg-white/60 hover:bg-white/80 backdrop-blur-md text-gray-700 hover:text-gray-900 border border-gray-200/30;
+  }
 }

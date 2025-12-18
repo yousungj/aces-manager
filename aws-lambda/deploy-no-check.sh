@@ -41,7 +41,7 @@ else
   echo "✨ Creating new Lambda function..."
   aws lambda create-function \
     --function-name $FUNCTION_NAME \
-    --runtime nodejs18.x \
+    --runtime nodejs16.x \
     --role $ROLE_ARN \
     --handler submissions.handler \
     --zip-file fileb://function.zip \

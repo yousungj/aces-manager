@@ -1,4 +1,4 @@
-// Import base vehicle IDs from JSON files (generated at build time)
+// Import the pre-extracted BaseVehicle IDs
 import megaSuperIds from './data/mega-super-ids.json';
 import scWoIhrIds from './data/sc-wo-ihr-ids.json';
 import swc15InchIds from './data/swc-15inch-ids.json';
@@ -14,15 +14,15 @@ type AcesRow = {
   baseVehicleId?: string;
 };
 
-// Helper to build XML from base vehicle IDs
-function buildXmlFromIds(baseVehicleIds: string[], rows: AcesRow[]): string {
+// Helper to build XML from BaseVehicle ID list
+function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): string {
   // Get the first row's data (all rows should have same part/brand/type for a template)
   const row = rows[0] || { partNumber: '', brandAaiaId: '', partTypeId: '' };
   const currentDate = new Date().toISOString().split('T')[0];
   
-  // XML Header
+  // Build header
   const header = `<?xml version="1.0" encoding="utf-8"?>
-<ACES version="3.0">
+<ACES version="3.2">
   <Header>
     <Company>BDK Auto</Company>
     <SenderName>BDK User</SenderName>
@@ -36,19 +36,20 @@ function buildXmlFromIds(baseVehicleIds: string[], rows: AcesRow[]): string {
     <VcdbVersionDate>2022-06-24</VcdbVersionDate>
     <QdbVersionDate>2015-05-26</QdbVersionDate>
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
-  </Header>`;
+  </Header>
+  <App action="A" id="1">`;
   
-  // Generate App entries with BaseVehicle IDs
+  // Generate App entries with BaseVehicle IDs from template
   const apps = baseVehicleIds.map((baseVehicleId, index) => {
     return `  <App action="A" id="${index + 1}">
-    <BaseVehicle id="${baseVehicleId}" /><Note></Note>
+    <BaseVehicle id="${baseVehicleId}" /><Note />
     <Qty>1</Qty>
     <PartType id="${row.partTypeId}" />
     <Part>${row.partNumber}</Part>
   </App>`;
   }).join('\n');
   
-  return `${header}\n${apps}\n</ACES>`;
+  return header + '\n' + apps + '\n</ACES>';
 }
 
 export function buildMegaSuperXml(rows: AcesRow[]): string {

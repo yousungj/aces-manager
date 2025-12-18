@@ -165,41 +165,19 @@ export default function ACESManagerStep1() {
       return;
     }
 
-    // For bulk mode, generate and download separate XML for each part number
-    if (mode === "bulk") {
-      rows.forEach((row, index) => {
-        // Generate XML for this part number
-        const xmlContent = templateFunc([row]);
-        
-        // Download with delay to avoid browser blocking multiple downloads
-        setTimeout(() => {
-          const blob = new Blob([xmlContent], { type: 'application/xml' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `aces-${row.partNumber}-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, index * 300); // 300ms delay between downloads
-      });
-      
-      alert(`Generating ${rows.length} XML files. Please wait...`);
-    } else {
-      // Single mode - generate one XML file
-      const xmlContent = templateFunc(rows);
+    // Generate XML using the mapped template
+    const xmlContent = templateFunc(rows);
 
-      const blob = new Blob([xmlContent], { type: 'application/xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+    // Download the XML file
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleAttachVehicles = () => {
@@ -210,12 +188,15 @@ export default function ACESManagerStep1() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent" style={{ letterSpacing: '-0.04em' }}>ACES Manager</h1>
-            <p className="text-gray-500 mt-2 text-lg">Powerful XML generation for automotive parts</p>
+          <div className="flex-1">
+            <h1 className="text-6xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent" style={{ letterSpacing: '-0.04em' }}>ACES Manager</h1>
+            <p className="text-center text-gray-500 text-lg">Powerful XML generation for automotive parts</p>
           </div>
-          <Link href="/custom-builder" className="apple-btn apple-btn-secondary px-6 py-3">
-            Custom Builder →
+          <Link 
+            href="/custom-builder" 
+            className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap ml-6"
+          >
+            🛠️ Custom Builder
           </Link>
         </div>
 

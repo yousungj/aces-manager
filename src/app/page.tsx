@@ -17,6 +17,16 @@ type PreviewState = {
   note: string;
 };
 
+type SubmissionRecord = {
+  partNumber: string;
+  brandCode: string;
+  brandName: string;
+  partTypeId: string;
+  partTypeName: string;
+  date: string;
+  timestamp: number;
+};
+
 type BrandOption = { code: string; name: string };
 type PartTypeOption = { name: string; id: string };
 
@@ -111,6 +121,48 @@ export default function ACESManagerStep1() {
     } catch { return DEFAULT_TREE; }
   });
 
+  const [submissionHistory, setSubmissionHistory] = useState<Record<string, SubmissionRecord[]>>({});
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
+  const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const [pendingSubmission, setPendingSubmission] = useState<{templateId: string; templateName: string; rows: GenerateRow[]} | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Load submission history from API
+  React.useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) {
+          // Fallback to localStorage if no API configured
+          const saved = localStorage.getItem("aces_submission_history_v1");
+          setSubmissionHistory(saved ? JSON.parse(saved) : {});
+          setIsLoadingHistory(false);
+          return;
+        }
+
+        const response = await fetch(`${apiUrl}/submissions`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setSubmissionHistory(data.history);
+        } else {
+          // Fallback to localStorage on API error
+          const saved = localStorage.getItem("aces_submission_history_v1");
+          setSubmissionHistory(saved ? JSON.parse(saved) : {});
+        }
+      } catch (error) {
+        console.error('Failed to load submission history:', error);
+        // Fallback to localStorage on error
+        const saved = localStorage.getItem("aces_submission_history_v1");
+        setSubmissionHistory(saved ? JSON.parse(saved) : {});
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+    loadHistory();
+  }, []);
+
   const [path, setPath] = useState<PathState>({ level1: null, level2: null });
   const [mode, setMode] = useState<"single" | "bulk">("single");
   const [singlePartNumber, setSinglePartNumber] = useState("");
@@ -178,6 +230,99 @@ export default function ACESManagerStep1() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Show save prompt
+    setPendingSubmission({ templateId: selectedTemplate.id, templateName: selectedTemplate.name, rows });
+    setShowSavePrompt(true);
+  };
+
+  const handleSaveSubmission = async () => {
+    if (!pendingSubmission) return;
+
+    const newRecords: SubmissionRecord[] = pendingSubmission.rows.map(row => {
+      const brandName = BRAND_OPTIONS.find(b => b.code === row.brandAaiaId)?.name || row.brandAaiaId;
+      const partTypeName = PART_TYPE_OPTIONS.find(p => p.id === row.partTypeId)?.name || row.partTypeId;
+      return {
+        partNumber: row.partNumber,
+        brandCode: row.brandAaiaId,
+        brandName,
+        partTypeId: row.partTypeId,
+        partTypeName,
+        date: new Date().toLocaleDateString(),
+        timestamp: Date.now()
+      };
+    });
+
+    const templateId = pendingSubmission.templateId;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      if (apiUrl) {
+        // Save to AWS API
+        const response = await fetch(`${apiUrl}/submissions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ templateId, records: newRecords })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          setSubmissionHistory(data.history);
+        } else {
+          throw new Error('API save failed');
+        }
+      } else {
+        throw new Error('No API configured');
+      }
+    } catch (error) {
+      console.error('Failed to save to API, using localStorage:', error);
+      // Fallback to localStorage
+      const updatedHistory = {
+        ...submissionHistory,
+        [templateId]: [...(submissionHistory[templateId] || []), ...newRecords]
+      };
+      setSubmissionHistory(updatedHistory);
+      localStorage.setItem("aces_submission_history_v1", JSON.stringify(updatedHistory));
+    }
+
+    setShowSavePrompt(false);
+    setPendingSubmission(null);
+  };
+
+  const handleSkipSave = () => {
+    setShowSavePrompt(false);
+    setPendingSubmission(null);
+  };
+
+  const handleClearHistory = async (templateId: string) => {
+    if (!confirm(`Clear all submission history for ${selectedTemplate?.name}?`)) return;
+    
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      if (apiUrl) {
+        // Delete from AWS API
+        const response = await fetch(`${apiUrl}/submissions?templateId=${templateId}`, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          setSubmissionHistory(data.history);
+        } else {
+          throw new Error('API delete failed');
+        }
+      } else {
+        throw new Error('No API configured');
+      }
+    } catch (error) {
+      console.error('Failed to delete from API, using localStorage:', error);
+      // Fallback to localStorage
+      const updatedHistory = { ...submissionHistory };
+      delete updatedHistory[templateId];
+      setSubmissionHistory(updatedHistory);
+      localStorage.setItem("aces_submission_history_v1", JSON.stringify(updatedHistory));
+    }
   };
 
   const handleAttachVehicles = () => {
@@ -243,8 +388,20 @@ export default function ACESManagerStep1() {
             {selectedTemplate ? (
               <div className="glass-card rounded-3xl p-8">
                 <div>
-                  <h2 className="text-3xl font-semibold mb-6 text-gray-900" style={{ letterSpacing: '-0.03em' }}>Generate XML</h2>
-                  <p className="text-gray-500 mb-6">Template: {selectedTemplate.name}</p>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-3xl font-semibold text-gray-900" style={{ letterSpacing: '-0.03em' }}>Generate XML</h2>
+                      <p className="text-gray-500 mt-1">Template: {selectedTemplate.name}</p>
+                    </div>
+                    {submissionHistory[selectedTemplate.id]?.length > 0 && (
+                      <button
+                        onClick={() => setShowHistory(true)}
+                        className="apple-btn apple-btn-secondary px-4 py-2 text-sm"
+                      >
+                        📋 View History ({submissionHistory[selectedTemplate.id].length})
+                      </button>
+                    )}
+                  </div>
 
                   <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl mb-8 inline-flex">
                     <button onClick={() => setMode("single")} className={classNames("px-6 py-2.5 rounded-xl font-medium transition-all duration-200", mode === "single" ? "bg-white text-gray-900 shadow-md" : "text-gray-600 hover:text-gray-900")}>Single</button>
@@ -317,6 +474,91 @@ export default function ACESManagerStep1() {
           </div>
         </div>
       </div>
+
+      {/* Save Submission Prompt Modal */}
+      {showSavePrompt && pendingSubmission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="glass-card rounded-3xl p-8 max-w-md w-full">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">Save Submission Record?</h3>
+            <p className="text-gray-600 mb-6">
+              Would you like to save this submission to your history?
+            </p>
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
+              <p className="text-sm text-gray-700">
+                <strong>Template:</strong> {pendingSubmission.templateName}<br/>
+                <strong>Parts:</strong> {pendingSubmission.rows.map(r => r.partNumber).join(', ')}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSkipSave}
+                className="flex-1 px-6 py-3 rounded-xl font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all"
+              >
+                Skip
+              </button>
+              <button
+                onClick={handleSaveSubmission}
+                className="flex-1 apple-btn apple-btn-primary px-6 py-3"
+              >
+                Save Record
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submission History Viewer */}
+      {showHistory && selectedTemplate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="glass-card rounded-3xl p-8 max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-semibold text-gray-900">
+                Submission History: {selectedTemplate.name}
+              </h3>
+              <button
+                onClick={() => setShowHistory(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+            
+            {submissionHistory[selectedTemplate.id]?.length > 0 ? (
+              <>
+                <div className="mb-4">
+                  <button
+                    onClick={() => handleClearHistory(selectedTemplate.id)}
+                    className="text-sm text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Clear All History
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {submissionHistory[selectedTemplate.id]
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .map((record, index) => (
+                      <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-900 text-lg">{record.partNumber}</p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {record.brandName} ({record.brandCode}) • {record.partTypeName}
+                            </p>
+                          </div>
+                          <span className="text-sm text-gray-500">{record.date}</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">No submission history for this template yet.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -357,6 +357,12 @@ export default function ACESManagerStep1() {
             >
               🛠️ Custom Builder
             </Link>
+            <Link 
+              href="/asin-checker" 
+              className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap"
+            >
+              🔍 ASIN Checker
+            </Link>
           </div>
         </div>
 

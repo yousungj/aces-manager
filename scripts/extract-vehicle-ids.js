@@ -10,6 +10,11 @@ const templates = [
   { file: 'VC1.xml', output: 'vc1-ids.json' },
   { file: 'VC2.xml', output: 'vc2-ids.json' },
   { file: 'VC3.xml', output: 'vc3-ids.json' },
+  { file: 'CC1.xml', output: 'cc1-ids.json' },
+  { file: 'CC2.xml', output: 'cc2-ids.json' },
+  { file: 'CC3.xml', output: 'cc3-ids.json' },
+  { file: 'CC4.xml', output: 'cc4-ids.json' },
+  { file: 'CC5.xml', output: 'cc5-ids.json' },
 ];
 
 const acesDir = path.join(__dirname, '../src/templates/aces');

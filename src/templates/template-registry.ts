@@ -6,7 +6,12 @@ import {
   buildVc0Xml,
   buildVc1Xml,
   buildVc2Xml,
-  buildVc3Xml
+  buildVc3Xml,
+  buildCc1Xml,
+  buildCc2Xml,
+  buildCc3Xml,
+  buildCc4Xml,
+  buildCc5Xml
 } from './aces/xml-templates';
 
 // Type for template functions
@@ -33,12 +38,12 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'swc-xl1': buildSwc15InchXml,
   'swc-15inch': buildSwc15InchXml,
   
-  // Car Cover templates (TODO: Need XML files for car covers)
-  'cc-s': buildSeatCoverXml,
-  'cc-m': buildSeatCoverXml,
-  'cc-l': buildSeatCoverXml,
-  'cc-xl1': buildSeatCoverXml,
-  'cc-xl2': buildSeatCoverXml,
+  // Car Cover templates
+  'cc-s': buildCc1Xml,      // Small
+  'cc-m': buildCc2Xml,      // Medium
+  'cc-l': buildCc3Xml,      // Large
+  'cc-xl1': buildCc4Xml,    // XL1
+  'cc-xl2': buildCc5Xml,    // XL2
   
   // SUV Cover templates (Vehicle Cover)
   'suv-l': buildVc0Xml,

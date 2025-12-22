@@ -6,6 +6,11 @@ import vc0Ids from './data/vc0-ids.json';
 import vc1Ids from './data/vc1-ids.json';
 import vc2Ids from './data/vc2-ids.json';
 import vc3Ids from './data/vc3-ids.json';
+import cc1Ids from './data/cc1-ids.json';
+import cc2Ids from './data/cc2-ids.json';
+import cc3Ids from './data/cc3-ids.json';
+import cc4Ids from './data/cc4-ids.json';
+import cc5Ids from './data/cc5-ids.json';
 
 type AcesRow = {
   partNumber: string;
@@ -84,4 +89,24 @@ export function buildVc2Xml(rows: AcesRow[]): string {
 
 export function buildVc3Xml(rows: AcesRow[]): string {
   return buildXmlFromIds(vc3Ids, rows);
+}
+
+export function buildCc1Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc1Ids, rows);
+}
+
+export function buildCc2Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc2Ids, rows);
+}
+
+export function buildCc3Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc3Ids, rows);
+}
+
+export function buildCc4Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc4Ids, rows);
+}
+
+export function buildCc5Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc5Ids, rows);
 }

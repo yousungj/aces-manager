@@ -44,6 +44,23 @@ export default function AsinChecker() {
     }
   };
 
+  const copyAllPartNumbers = async () => {
+    const partNumbers = bulkResults
+      .filter(r => r.partNumber)
+      .map(r => r.partNumber)
+      .join('\n');
+    
+    if (partNumbers) {
+      try {
+        await navigator.clipboard.writeText(partNumbers);
+        setCopiedPartNumber('ALL');
+        setTimeout(() => setCopiedPartNumber(null), 2000);
+      } catch (err) {
+        console.error('Failed to copy all:', err);
+      }
+    }
+  };
+
   const parseBulkAsins = (text: string): string[] => {
     const asins: string[] = [];
     const seen = new Set<string>();
@@ -342,15 +359,23 @@ export default function AsinChecker() {
                 <h3 className="text-lg font-semibold text-gray-900">
                   Results ({bulkResults.length} ASINs)
                 </h3>
-                <button
-                  onClick={() => {
-                    setBulkResults([]);
-                    setBulkAsins("");
-                  }}
-                  className="apple-btn apple-btn-secondary px-4 py-2 text-sm"
-                >
-                  Clear Results
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={copyAllPartNumbers}
+                    className="apple-btn apple-btn-primary px-4 py-2 text-sm"
+                  >
+                    {copiedPartNumber === 'ALL' ? '✓ Copied!' : '📋 Copy All Part Numbers'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setBulkResults([]);
+                      setBulkAsins("");
+                    }}
+                    className="apple-btn apple-btn-secondary px-4 py-2 text-sm"
+                  >
+                    Clear Results
+                  </button>
+                </div>
               </div>
               
               <div className="overflow-x-auto">

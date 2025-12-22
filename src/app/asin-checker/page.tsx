@@ -32,6 +32,17 @@ export default function AsinChecker() {
   const [result, setResult] = useState<AsinLookupResult | null>(null);
   const [bulkResults, setBulkResults] = useState<BulkResult[]>([]);
   const [error, setError] = useState("");
+  const [copiedPartNumber, setCopiedPartNumber] = useState<string | null>(null);
+
+  const copyPartNumber = async (partNumber: string) => {
+    try {
+      await navigator.clipboard.writeText(partNumber);
+      setCopiedPartNumber(partNumber);
+      setTimeout(() => setCopiedPartNumber(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   const parseBulkAsins = (text: string): string[] => {
     const asins: string[] = [];
@@ -368,7 +379,24 @@ export default function AsinChecker() {
                           </a>
                         </td>
                         <td className="px-4 py-3 text-sm font-medium">
-                          {item.partNumber || <span className="text-gray-400">Not found</span>}
+                          {item.partNumber ? (
+                            <div className="flex items-center gap-2">
+                              <span>{item.partNumber}</span>
+                              <button
+                                onClick={() => copyPartNumber(item.partNumber!)}
+                                className="text-blue-600 hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
+                                title="Copy part number"
+                              >
+                                {copiedPartNumber === item.partNumber ? (
+                                  <span className="text-green-600">✓</span>
+                                ) : (
+                                  <span>📋</span>
+                                )}
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">Not found</span>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-sm">{item.rawData.brand}</td>
                         <td className="px-4 py-3 text-sm">{item.category || 'N/A'}</td>
@@ -413,9 +441,22 @@ export default function AsinChecker() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <p className="text-sm text-gray-600 mb-2">Part Number</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {result.partNumber || <span className="text-gray-400">Not found</span>}
-                  </p>
+                  {result.partNumber ? (
+                    <div className="flex items-center gap-3">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {result.partNumber}
+                      </p>
+                      <button
+                        onClick={() => copyPartNumber(result.partNumber!)}
+                        className="apple-btn apple-btn-secondary px-4 py-2 text-sm"
+                        title="Copy part number"
+                      >
+                        {copiedPartNumber === result.partNumber ? '✓ Copied!' : '📋 Copy'}
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-2xl font-bold text-gray-400">Not found</p>
+                  )}
                 </div>
 
                 <div className={`border rounded-xl p-6 ${getStatusColor(result.fitmentStatus.status)}`}>

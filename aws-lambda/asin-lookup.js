@@ -131,6 +131,10 @@ async function getFitmentData(accessToken, asin) {
  */
 function extractFitmentInfo(productData) {
   try {
+    // Log the entire product data for debugging
+    console.log('Product Data Keys:', Object.keys(productData));
+    console.log('Attributes:', JSON.stringify(productData.attributes, null, 2));
+    
     const attributes = productData.attributes;
     if (!attributes) return null;
 
@@ -144,6 +148,7 @@ function extractFitmentInfo(productData) {
 
     // Check for part_type_data (ACES fitment)
     if (attributes.part_type_data) {
+      console.log('Found part_type_data');
       fitmentData.hasAces = true;
       // Extract vehicle applications if available
       if (attributes.part_type_data.vehicle_applications) {
@@ -154,6 +159,7 @@ function extractFitmentInfo(productData) {
 
     // Check for automotive_fitment attribute
     if (attributes.automotive_fitment) {
+      console.log('Found automotive_fitment:', attributes.automotive_fitment);
       fitmentData.hasAces = true;
       if (Array.isArray(attributes.automotive_fitment)) {
         fitmentData.vehicles = attributes.automotive_fitment;
@@ -161,6 +167,39 @@ function extractFitmentInfo(productData) {
       }
     }
 
+    // Check for automotive_fit_type (universal_fit or vehicle_specific)
+    if (attributes.automotive_fit_type) {
+      console.log('Automotive fit type:', attributes.automotive_fit_type);
+      const fitType = attributes.automotive_fit_type[0]?.value || '';
+      if (fitType === 'universal_fit') {
+        fitmentData.hasAces = true;
+        fitmentData.isUniversal = true;
+        fitmentData.vehicleCount = -1; // Flag for universal
+      } else if (fitType === 'vehicle_specific') {
+        fitmentData.hasAces = true;
+      }
+    }
+
+    // Check for item_type_name which might indicate automotive
+    if (attributes.item_type_name) {
+      console.log('Item type:', attributes.item_type_name);
+      const itemType = attributes.item_type_name[0]?.value?.toLowerCase() || '';
+      if (itemType.includes('auto') || itemType.includes('vehicle') || itemType.includes('car')) {
+        fitmentData.hasAces = true;
+      }
+    }
+
+    // Check for manufacturer compatibility data
+    if (attributes.compatibility_make || attributes.compatibility_model || attributes.compatibility_year) {
+      console.log('Found compatibility data');
+      fitmentData.hasAces = true;
+      // If we have compatibility data but no vehicle count, set a flag
+      if (fitmentData.vehicleCount === 0) {
+        fitmentData.vehicleCount = 1; // At least one vehicle is compatible
+      }
+    }
+
+    console.log('Final fitment data:', fitmentData);
     return fitmentData;
   } catch (err) {
     console.error('Error extracting fitment info:', err);
@@ -248,6 +287,20 @@ exports.handler = async (event) => {
     // Get product details
     const productData = await getProductDetails(accessToken, asin);
 
+    // Check for errors in response
+    if (productData.errors && productData.errors.length > 0) {
+      console.log('API returned errors:', JSON.stringify(productData.errors));
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: productData.errors[0].message || 'Product not found or access denied',
+          asin
+        })
+      };
+    }
+
     // Extract part number
     const partNumber = extractPartNumber(productData);
 
@@ -297,6 +350,11 @@ exports.handler = async (event) => {
 function determineFitmentStatus(fitmentData) {
   if (!fitmentData) {
     return 'NO_DATA';
+  }
+  
+  // Universal fit products
+  if (fitmentData.isUniversal || fitmentData.vehicleCount === -1) {
+    return 'UNIVERSAL';
   }
   
   if (fitmentData.hasAces && fitmentData.vehicleCount > 0) {

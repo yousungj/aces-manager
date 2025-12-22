@@ -10,7 +10,7 @@ type AsinLookupResult = {
   fitmentStatus: {
     hasAces: boolean;
     vehicleCount: number;
-    status: 'LIVE' | 'PENDING' | 'NO_FITMENT' | 'NO_DATA';
+    status: 'LIVE' | 'PENDING' | 'NO_FITMENT' | 'NO_DATA' | 'UNIVERSAL';
     lastChecked: string;
   };
   rawData: {
@@ -201,6 +201,7 @@ export default function AsinChecker() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'LIVE': return 'text-green-600 bg-green-50';
+      case 'UNIVERSAL': return 'text-blue-600 bg-blue-50';
       case 'PENDING': return 'text-yellow-600 bg-yellow-50';
       case 'NO_FITMENT': return 'text-orange-600 bg-orange-50';
       case 'NO_DATA': return 'text-gray-600 bg-gray-50';
@@ -211,6 +212,7 @@ export default function AsinChecker() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'LIVE': return '✅';
+      case 'UNIVERSAL': return '🌐';
       case 'PENDING': return '⏳';
       case 'NO_FITMENT': return '⚠️';
       case 'NO_DATA': return '❌';
@@ -221,6 +223,7 @@ export default function AsinChecker() {
   const getStatusMessage = (status: string, vehicleCount: number) => {
     switch (status) {
       case 'LIVE': return `ACES Live - ${vehicleCount} vehicles`;
+      case 'UNIVERSAL': return 'Universal Fit';
       case 'PENDING': return 'ACES Pending - Processing';
       case 'NO_FITMENT': return 'No fitment data found';
       case 'NO_DATA': return 'No ACES data available';
@@ -455,6 +458,13 @@ export default function AsinChecker() {
               <div>
                 <p className="font-medium text-gray-900">LIVE</p>
                 <p className="text-sm text-gray-600">ACES data is live on Amazon with vehicle fitments</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🌐</span>
+              <div>
+                <p className="font-medium text-gray-900">UNIVERSAL</p>
+                <p className="text-sm text-gray-600">Universal fit product - fits all/most vehicles</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

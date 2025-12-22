@@ -16,7 +16,7 @@ type AcesRow = {
 
 // Helper to build XML from BaseVehicle ID list
 function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): string {
-  // Get the first row's data (all rows should have same part/brand/type for a template)
+  // Get the first row's data for header (all rows should have same brand/type for a template)
   const row = rows[0] || { partNumber: '', brandAaiaId: '', partTypeId: '' };
   const currentDate = new Date().toISOString().split('T')[0];
   
@@ -29,7 +29,7 @@ function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): 
     <SenderPhone>000-000-0000</SenderPhone>
     <TransferDate>${currentDate}</TransferDate>
     <BrandAAIAID>${row.brandAaiaId}</BrandAAIAID>
-    <DocumentTitle>${row.partNumber}</DocumentTitle>
+    <DocumentTitle>ACES Export</DocumentTitle>
     <EffectiveDate>${currentDate}</EffectiveDate>
     <ApprovedFor>US</ApprovedFor>
     <SubmissionType>FULL</SubmissionType>
@@ -37,19 +37,25 @@ function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): 
     <QdbVersionDate>2015-05-26</QdbVersionDate>
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
   </Header>
-  <App action="A" id="1">`;
+  <Apps>`;
   
-  // Generate App entries with BaseVehicle IDs from template
-  const apps = baseVehicleIds.map((baseVehicleId, index) => {
-    return `  <App action="A" id="${index + 1}">
+  // Generate App entries for each part number × each BaseVehicle ID
+  let appId = 1;
+  const apps: string[] = [];
+  
+  for (const partRow of rows) {
+    for (const baseVehicleId of baseVehicleIds) {
+      apps.push(`  <App action="A" id="${appId}">
     <BaseVehicle id="${baseVehicleId}" /><Note />
     <Qty>1</Qty>
-    <PartType id="${row.partTypeId}" />
-    <Part>${row.partNumber}</Part>
-  </App>`;
-  }).join('\n');
+    <PartType id="${partRow.partTypeId}" />
+    <Part>${partRow.partNumber}</Part>
+  </App>`);
+      appId++;
+    }
+  }
   
-  return header + '\n' + apps + '\n</ACES>';
+  return header + '\n' + apps.join('\n') + '\n</Apps>\n</ACES>';
 }
 
 export function buildMegaSuperXml(rows: AcesRow[]): string {

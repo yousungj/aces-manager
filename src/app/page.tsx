@@ -217,19 +217,26 @@ export default function ACESManagerStep1() {
       return;
     }
 
-    // Generate XML using the mapped template
-    const xmlContent = templateFunc(rows);
+    // Generate and download separate XML file for each part number
+    rows.forEach((row, index) => {
+      // Generate XML for this single part number
+      const xmlContent = templateFunc([row]);
 
-    // Download the XML file
-    const blob = new Blob([xmlContent], { type: 'application/xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `aces-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.xml`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      // Download the XML file
+      const blob = new Blob([xmlContent], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${row.partNumber}.xml`;
+      document.body.appendChild(a);
+      
+      // Add small delay between downloads in bulk mode to avoid browser blocking
+      setTimeout(() => {
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, index * 100);
+    });
 
     // Show save prompt
     setPendingSubmission({ templateId: selectedTemplate.id, templateName: selectedTemplate.name, rows });

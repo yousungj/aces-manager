@@ -281,7 +281,48 @@ export default function AsinChecker() {
                   maxLength={10}
                 />
                 <button
-           mode === "bulk" && bulkResults.length > 0 && (
+                  onClick={handleLookup}
+                  disabled={isLoading}
+                  className="apple-btn apple-btn-primary px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Checking...' : 'Lookup'}
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Enter a 10-character Amazon ASIN (e.g., B0ABCD1234)
+              </p>
+            </div>
+          ) : (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bulk ASINs (one per line or comma-separated)
+              </label>
+              <textarea
+                className="w-full h-48 px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-mono text-sm bg-white/50 resize-none"
+                placeholder="B0ABCD1234&#10;B0EFGH5678&#10;B0IJKL9012"
+                value={bulkAsins}
+                onChange={(e) => setBulkAsins(e.target.value)}
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                Enter multiple ASINs (one per line or comma-separated). Lines starting with # are ignored.
+              </p>
+              <button
+                onClick={handleLookup}
+                disabled={isLoading}
+                className="apple-btn apple-btn-primary px-8 py-3 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? `Checking... (${bulkResults.length} processed)` : 'Lookup All ASINs'}
+              </button>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-700 mb-6">
+              <strong>Error:</strong> {error}
+            </div>
+          )}
+
+          {mode === "bulk" && bulkResults.length > 0 && (
             <div className="mt-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -351,48 +392,7 @@ export default function AsinChecker() {
             </div>
           )}
 
-          {mode === "single" &&        onClick={handleLookup}
-                  disabled={isLoading}
-                  className="apple-btn apple-btn-primary px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Checking...' : 'Lookup'}
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Enter a 10-character Amazon ASIN (e.g., B0ABCD1234)
-              </p>
-            </div>
-          ) : (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Bulk ASINs (one per line or comma-separated)
-              </label>
-              <textarea
-                className="w-full h-48 px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-mono text-sm bg-white/50 resize-none"
-                placeholder="B0ABCD1234&#10;B0EFGH5678&#10;B0IJKL9012"
-                value={bulkAsins}
-                onChange={(e) => setBulkAsins(e.target.value)}
-              />
-              <p className="text-sm text-gray-500 mt-2">
-                Enter multiple ASINs (one per line or comma-separated). Lines starting with # are ignored.
-              </p>
-              <button
-                onClick={handleLookup}
-                disabled={isLoading}
-                className="apple-btn apple-btn-primary px-8 py-3 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? `Checking... (${bulkResults.length} processed)` : 'Lookup All ASINs'}
-              </button>
-            </div>
-          )}
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-700 mb-6">
-              <strong>Error:</strong> {error}
-            </div>
-          )}
-
-          {result && (
+          {mode === "single" && result && (
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -445,6 +445,7 @@ export default function AsinChecker() {
               </div>
             </div>
           )}
+        </div>
 
         <div className="glass-card rounded-3xl p-6">
           <h3 className="text-xl font-semibold mb-4 text-gray-900">Status Legend</h3>

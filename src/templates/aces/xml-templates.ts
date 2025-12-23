@@ -2,6 +2,7 @@
 import megaSuperIds from './data/mega-super-ids.json';
 import scWoIhrIds from './data/sc-wo-ihr-ids.json';
 import swc15InchIds from './data/swc-15inch-ids.json';
+import swc16InchIds from './data/swc-16inch-ids.json';
 import vc0Ids from './data/vc0-ids.json';
 import vc1Ids from './data/vc1-ids.json';
 import vc2Ids from './data/vc2-ids.json';
@@ -73,6 +74,10 @@ export function buildScWoIhrXml(rows: AcesRow[]): string {
 
 export function buildSwc15InchXml(rows: AcesRow[]): string {
   return buildXmlFromIds(swc15InchIds, rows);
+}
+
+export function buildSwc16InchXml(rows: AcesRow[]): string {
+  return buildXmlFromIds(swc16InchIds, rows);
 }
 
 export function buildVc0Xml(rows: AcesRow[]): string {

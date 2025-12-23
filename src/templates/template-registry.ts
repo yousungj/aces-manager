@@ -3,6 +3,7 @@ import {
   buildMegaSuperXml, 
   buildScWoIhrXml, 
   buildSwc15InchXml,
+  buildSwc16InchXml,
   buildVc0Xml,
   buildVc1Xml,
   buildVc2Xml,
@@ -34,7 +35,7 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   // SWC templates
   'swc-s': buildSwc15InchXml,
   'swc-m': buildSwc15InchXml,
-  'swc-l': buildSwc15InchXml,
+  'swc-l': buildSwc16InchXml,
   'swc-xl1': buildSwc15InchXml,
   'swc-15inch': buildSwc15InchXml,
   

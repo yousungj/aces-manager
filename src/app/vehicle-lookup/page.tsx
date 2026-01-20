@@ -461,9 +461,7 @@ ${vehicleSection}
     <QdbVersionDate>2015-05-26</QdbVersionDate>
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
   </Header>
-  <Apps>
 ${appRecords}
-  </Apps>
 </ACES>`;
 
     // Download XML file

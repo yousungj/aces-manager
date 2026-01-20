@@ -37,6 +37,19 @@ type BodyType = {
   BodyTypeName: string;
 };
 
+type BodyStyleConfig = {
+  BodyStyleConfigID: number;
+  BodyNumDoorsID: number;
+  BodyTypeID: number;
+};
+
+type VehicleToBodyStyleConfig = {
+  VehicleToBodyStyleConfigID: number;
+  VehicleID: number;
+  BodyStyleConfigID: number;
+  Source: string | null;
+};
+
 export default function VehicleLookup() {
   const [makes, setMakes] = useState<Make[]>([]);
   const [models, setModels] = useState<Model[]>([]);
@@ -44,11 +57,14 @@ export default function VehicleLookup() {
   const [baseVehicles, setBaseVehicles] = useState<BaseVehicle[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [bodyTypes, setBodyTypes] = useState<BodyType[]>([]);
+  const [bodyStyleConfigs, setBodyStyleConfigs] = useState<BodyStyleConfig[]>([]);
+  const [vehicleToBodyStyleConfigs, setVehicleToBodyStyleConfigs] = useState<VehicleToBodyStyleConfig[]>([]);
   
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedMake, setSelectedMake] = useState<string>('');
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [selectedSubModel, setSelectedSubModel] = useState<string>('');
+  const [selectedBodyType, setSelectedBodyType] = useState<string>('');
   
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<BaseVehicle[]>([]);
@@ -85,6 +101,24 @@ export default function VehicleLookup() {
           console.log(`✓ Loaded ${bodyTypesRes.length} body types`);
         } catch (error) {
           console.log('BodyType.json not found');
+        }
+        
+        // Try to load BodyStyleConfig.json
+        try {
+          const bodyStyleConfigsRes = await fetch('/data/BodyStyleConfig.json').then(r => r.json());
+          setBodyStyleConfigs(bodyStyleConfigsRes);
+          console.log(`✓ Loaded ${bodyStyleConfigsRes.length} body style configs`);
+        } catch (error) {
+          console.log('BodyStyleConfig.json not found');
+        }
+        
+        // Try to load VehicleToBodyStyleConfig.json
+        try {
+          const vehicleToBodyStyleConfigsRes = await fetch('/data/VehicleToBodyStyleConfig.json').then(r => r.json());
+          setVehicleToBodyStyleConfigs(vehicleToBodyStyleConfigsRes);
+          console.log(`✓ Loaded ${vehicleToBodyStyleConfigsRes.length.toLocaleString()} vehicle to body style mappings`);
+        } catch (error) {
+          console.log('VehicleToBodyStyleConfig.json not found');
         }
         
         setLoading(false);
@@ -156,6 +190,54 @@ export default function VehicleLookup() {
     return subModels.filter(s => subModelIds.has(s.SubModelID)).sort((a, b) => a.SubModelName.localeCompare(b.SubModelName));
   }, [selectedYear, selectedMake, selectedModel, vehicles, baseVehicles, subModels]);
 
+  // Filter available body types (cab styles) based on selected vehicle
+  const availableBodyTypes = useMemo(() => {
+    if (!vehicleToBodyStyleConfigs.length || !bodyStyleConfigs.length || !bodyTypes.length) {
+      return [];
+    }
+    
+    if (!selectedYear || !selectedMake || !selectedModel) {
+      return [];
+    }
+    
+    // Get all base vehicle IDs for the selected year/make/model
+    const baseVehicleIds = new Set(
+      baseVehicles
+        .filter(v => 
+          v.YearID === parseInt(selectedYear) &&
+          v.MakeID === parseInt(selectedMake) &&
+          v.ModelID === parseInt(selectedModel)
+        )
+        .map(v => v.BaseVehicleID)
+    );
+    
+    // Get all vehicle IDs that match these base vehicle IDs
+    const vehicleIds = new Set(
+      vehicles
+        .filter(v => baseVehicleIds.has(v.BaseVehicleID))
+        .map(v => v.VehicleID)
+    );
+    
+    // Get all body style config IDs for these vehicles
+    const bodyStyleConfigIds = new Set(
+      vehicleToBodyStyleConfigs
+        .filter(v => vehicleIds.has(v.VehicleID))
+        .map(v => v.BodyStyleConfigID)
+    );
+    
+    // Get all body type IDs from these configs
+    const bodyTypeIds = new Set(
+      bodyStyleConfigs
+        .filter(c => bodyStyleConfigIds.has(c.BodyStyleConfigID))
+        .map(c => c.BodyTypeID)
+    );
+    
+    // Filter and sort body types
+    return bodyTypes
+      .filter(bt => bodyTypeIds.has(bt.BodyTypeID))
+      .sort((a, b) => a.BodyTypeName.localeCompare(b.BodyTypeName));
+  }, [selectedYear, selectedMake, selectedModel, vehicles, baseVehicles, vehicleToBodyStyleConfigs, bodyStyleConfigs, bodyTypes]);
+
   // Get base vehicle ID when all selections are made
   const baseVehicleResult = useMemo(() => {
     if (!selectedYear || !selectedMake || !selectedModel) return null;
@@ -173,6 +255,7 @@ export default function VehicleLookup() {
   const selectedMakeName = makes.find(m => m.MakeID === parseInt(selectedMake))?.MakeName || '';
   const selectedModelName = models.find(m => m.ModelID === parseInt(selectedModel))?.ModelName || '';
   const selectedSubModelName = subModels.find(s => s.SubModelID === parseInt(selectedSubModel))?.SubModelName || '';
+  const selectedBodyTypeName = bodyTypes.find(bt => bt.BodyTypeID === parseInt(selectedBodyType))?.BodyTypeName || '';
 
   const handleSearch = () => {
     if (!selectedYear || !selectedMake || !selectedModel) {
@@ -194,6 +277,7 @@ export default function VehicleLookup() {
     setSelectedMake('');
     setSelectedModel('');
     setSelectedSubModel('');
+    setSelectedBodyType('');
     setSearchResults([]);
   };
 
@@ -277,6 +361,7 @@ export default function VehicleLookup() {
                       setSelectedMake(e.target.value);
                       setSelectedModel('');
                       setSelectedSubModel('');
+                      setSelectedBodyType('');
                       setSearchResults([]);
                     }}
                     disabled={!selectedYear}
@@ -301,6 +386,7 @@ export default function VehicleLookup() {
                     onChange={(e) => {
                       setSelectedModel(e.target.value);
                       setSelectedSubModel('');
+                      setSelectedBodyType('');
                       setSearchResults([]);
                     }}
                     disabled={!selectedMake}
@@ -348,6 +434,31 @@ export default function VehicleLookup() {
                   )}
                 </div>
 
+                {/* Body Type / Cab Style Selection (Optional) */}
+                {availableBodyTypes.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Body Type / Cab Style
+                    </label>
+                    <select
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50"
+                      value={selectedBodyType}
+                      onChange={(e) => setSelectedBodyType(e.target.value)}
+                      disabled={!selectedModel}
+                    >
+                      <option value="">All Body Types</option>
+                      {availableBodyTypes.map(bodyType => (
+                        <option key={bodyType.BodyTypeID} value={bodyType.BodyTypeID}>
+                          {bodyType.BodyTypeName}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-600 mt-2">
+                      ✓ {availableBodyTypes.length} body type(s) available for this vehicle
+                    </p>
+                  </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4">
                   <button
@@ -374,7 +485,8 @@ export default function VehicleLookup() {
                     {selectedYear && `${selectedYear} `}
                     {selectedMakeName && `${selectedMakeName} `}
                     {selectedModelName && `${selectedModelName} `}
-                    {selectedSubModelName && `(${selectedSubModelName})`}
+                    {selectedSubModelName && `(${selectedSubModelName}) `}
+                    {selectedBodyTypeName && `[${selectedBodyTypeName}]`}
                   </p>
                 </div>
               )}
@@ -499,6 +611,18 @@ export default function VehicleLookup() {
                     Body Types: {bodyTypes.length > 0 ? bodyTypes.length : 'Not loaded'}
                   </span>
                 </li>
+                <li className="flex items-start">
+                  <span className={bodyStyleConfigs.length > 0 ? "text-green-500" : "text-yellow-500"}>{bodyStyleConfigs.length > 0 ? "✓" : "⚠"}</span>
+                  <span className="ml-2">
+                    Body Style Configs: {bodyStyleConfigs.length > 0 ? bodyStyleConfigs.length : 'Not loaded'}
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className={vehicleToBodyStyleConfigs.length > 0 ? "text-green-500" : "text-yellow-500"}>{vehicleToBodyStyleConfigs.length > 0 ? "✓" : "⚠"}</span>
+                  <span className="ml-2">
+                    Vehicle Body Mappings: {vehicleToBodyStyleConfigs.length > 0 ? vehicleToBodyStyleConfigs.length.toLocaleString() : 'Not loaded'}
+                  </span>
+                </li>
               </ul>
               
               {vehicles.length === 0 && (
@@ -516,14 +640,14 @@ export default function VehicleLookup() {
                 </div>
               )}
               
-              {vehicles.length > 0 && bodyTypes.length > 0 && (
+              {vehicles.length > 0 && bodyTypes.length > 0 && vehicleToBodyStyleConfigs.length > 0 && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
                   <p className="text-xs font-semibold text-green-900 mb-1">✓ Full Dataset Loaded</p>
                   <p className="text-xs text-green-800">
-                    Vehicle and BodyType data available. SubModels are now filtered accurately.
+                    Vehicle, BodyType, and BodyStyleConfig data available. SubModels and cab styles are now filtered accurately.
                   </p>
                   <p className="text-xs text-green-700 mt-2">
-                    <strong>Truck cab info:</strong> Check BodyType for pickup variations (Standard Cab, Extended Cab, Crew Cab)
+                    <strong>Cab style selection:</strong> Available for trucks with multiple body type options (Standard Cab, Extended Cab, Crew Cab, etc.)
                   </p>
                 </div>
               )}

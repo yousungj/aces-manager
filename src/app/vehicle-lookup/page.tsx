@@ -26,11 +26,18 @@ type BaseVehicle = {
   ModelID: number;
 };
 
+type Vehicle = {
+  VehicleID: number;
+  BaseVehicleID: number;
+  SubModelID: number;
+};
+
 export default function VehicleLookup() {
   const [makes, setMakes] = useState<Make[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [subModels, setSubModels] = useState<SubModel[]>([]);
   const [baseVehicles, setBaseVehicles] = useState<BaseVehicle[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedMake, setSelectedMake] = useState<string>('');
@@ -55,6 +62,15 @@ export default function VehicleLookup() {
         setModels(modelsRes);
         setSubModels(subModelsRes);
         setBaseVehicles(baseVehiclesRes);
+        
+        // Try to load Vehicle.json if it exists
+        try {
+          const vehiclesRes = await fetch('/data/Vehicle.json').then(r => r.json());
+          setVehicles(vehiclesRes);
+        } catch (error) {
+          console.log('Vehicle.json not found - SubModel filtering unavailable');
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Failed to load vehicle data:', error);
@@ -95,6 +111,34 @@ export default function VehicleLookup() {
     
     return models.filter(m => modelIds.has(m.ModelID)).sort((a, b) => a.ModelName.localeCompare(b.ModelName));
   }, [selectedYear, selectedMake, models, baseVehicles]);
+
+  // Filter subModels based on selected year, make, and model
+  const availableSubModels = useMemo(() => {
+    if (!vehicles.length || !selectedYear || !selectedMake || !selectedModel) {
+      // If no Vehicle.json, show limited list as reference
+      return subModels.slice(0, 100);
+    }
+    
+    // Get all base vehicle IDs for the selected year/make/model
+    const baseVehicleIds = new Set(
+      baseVehicles
+        .filter(v => 
+          v.YearID === parseInt(selectedYear) &&
+          v.MakeID === parseInt(selectedMake) &&
+          v.ModelID === parseInt(selectedModel)
+        )
+        .map(v => v.BaseVehicleID)
+    );
+    
+    // Get submodel IDs that match these base vehicle IDs
+    const subModelIds = new Set(
+      vehicles
+        .filter(v => baseVehicleIds.has(v.BaseVehicleID))
+        .map(v => v.SubModelID)
+    );
+    
+    return subModels.filter(s => subModelIds.has(s.SubModelID)).sort((a, b) => a.SubModelName.localeCompare(b.SubModelName));
+  }, [selectedYear, selectedMake, selectedModel, vehicles, baseVehicles, subModels]);
 
   // Get base vehicle ID when all selections are made
   const baseVehicleResult = useMemo(() => {
@@ -257,23 +301,35 @@ export default function VehicleLookup() {
                 {/* SubModel Selection (Optional) */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    SubModel (Optional)
+                    SubModel {vehicles.length > 0 ? '' : '(Reference Only)'}
                   </label>
                   <select
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50"
                     value={selectedSubModel}
                     onChange={(e) => setSelectedSubModel(e.target.value)}
+                    disabled={!selectedModel}
                   >
-                    <option value="">Select SubModel (Optional)</option>
-                    {subModels.map(subModel => (
+                    <option value="">
+                      {vehicles.length > 0 ? 'Select SubModel' : 'Select SubModel (Reference - Limited to 100)'}
+                    </option>
+                    {availableSubModels.map(subModel => (
                       <option key={subModel.SubModelID} value={subModel.SubModelID}>
                         {subModel.SubModelName}
                       </option>
                     ))}
                   </select>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Note: SubModel data is for reference only. Vehicle IDs are based on Year/Make/Model.
-                  </p>
+                  {vehicles.length === 0 && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-3 py-2 mt-2">
+                      <p className="text-xs text-yellow-800">
+                        ⚠️ <strong>Vehicle.json not found:</strong> Upload Vehicle.json to /public/data/ for accurate SubModel filtering and truck attributes (Cab Size, Bed Length, Body Type, etc.)
+                      </p>
+                    </div>
+                  )}
+                  {vehicles.length > 0 && (
+                    <p className="text-xs text-gray-600 mt-2">
+                      ✓ Showing {availableSubModels.length} SubModel(s) available for this vehicle
+                    </p>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -396,26 +452,47 @@ export default function VehicleLookup() {
             {/* Info Panel */}
             <div className="glass-card rounded-3xl p-6 mt-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">
-                ℹ️ About
+                ℹ️ Data Status
               </h4>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Total Makes: {makes.length.toLocaleString()}</span>
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Makes: {makes.length.toLocaleString()}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Total Models: {models.length.toLocaleString()}</span>
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Models: {models.length.toLocaleString()}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Total SubModels: {subModels.length.toLocaleString()}</span>
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>SubModels: {subModels.length.toLocaleString()}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Total Vehicles: {baseVehicles.length.toLocaleString()}</span>
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Base Vehicles: {baseVehicles.length.toLocaleString()}</span>
+                </li>
+                <li className="flex items-start">
+                  <span className={vehicles.length > 0 ? "text-green-500" : "text-yellow-500"}>{vehicles.length > 0 ? "✓" : "⚠"}</span>
+                  <span className="ml-2">
+                    Vehicles: {vehicles.length > 0 ? vehicles.length.toLocaleString() : 'Not loaded'}
+                  </span>
                 </li>
               </ul>
+              
+              {vehicles.length === 0 && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <p className="text-xs font-semibold text-blue-900 mb-1">Need Vehicle.json?</p>
+                  <p className="text-xs text-blue-800">
+                    Place Vehicle.json in <code className="bg-blue-100 px-1 rounded">/public/data/</code> to enable:
+                  </p>
+                  <ul className="text-xs text-blue-800 mt-2 ml-4 space-y-1">
+                    <li>• Filtered SubModel dropdown</li>
+                    <li>• Truck cab size info</li>
+                    <li>• Bed length data</li>
+                    <li>• Body type details</li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

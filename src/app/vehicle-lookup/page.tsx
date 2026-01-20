@@ -29,7 +29,12 @@ type BaseVehicle = {
 type Vehicle = {
   VehicleID: number;
   BaseVehicleID: number;
-  SubModelID: number;
+  SubmodelID: number;  // Note: lowercase 'm' in the actual data
+};
+
+type BodyType = {
+  BodyTypeID: number;
+  BodyTypeName: string;
 };
 
 export default function VehicleLookup() {
@@ -38,6 +43,7 @@ export default function VehicleLookup() {
   const [subModels, setSubModels] = useState<SubModel[]>([]);
   const [baseVehicles, setBaseVehicles] = useState<BaseVehicle[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [bodyTypes, setBodyTypes] = useState<BodyType[]>([]);
   
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedMake, setSelectedMake] = useState<string>('');
@@ -67,8 +73,18 @@ export default function VehicleLookup() {
         try {
           const vehiclesRes = await fetch('/data/Vehicle.json').then(r => r.json());
           setVehicles(vehiclesRes);
+          console.log(`✓ Loaded ${vehiclesRes.length.toLocaleString()} vehicle records`);
         } catch (error) {
           console.log('Vehicle.json not found - SubModel filtering unavailable');
+        }
+        
+        // Try to load BodyType.json if it exists
+        try {
+          const bodyTypesRes = await fetch('/data/BodyType.json').then(r => r.json());
+          setBodyTypes(bodyTypesRes);
+          console.log(`✓ Loaded ${bodyTypesRes.length} body types`);
+        } catch (error) {
+          console.log('BodyType.json not found');
         }
         
         setLoading(false);
@@ -134,7 +150,7 @@ export default function VehicleLookup() {
     const subModelIds = new Set(
       vehicles
         .filter(v => baseVehicleIds.has(v.BaseVehicleID))
-        .map(v => v.SubModelID)
+        .map(v => v.SubmodelID)  // Note: lowercase 'm'
     );
     
     return subModels.filter(s => subModelIds.has(s.SubModelID)).sort((a, b) => a.SubModelName.localeCompare(b.SubModelName));
@@ -477,6 +493,12 @@ export default function VehicleLookup() {
                     Vehicles: {vehicles.length > 0 ? vehicles.length.toLocaleString() : 'Not loaded'}
                   </span>
                 </li>
+                <li className="flex items-start">
+                  <span className={bodyTypes.length > 0 ? "text-green-500" : "text-yellow-500"}>{bodyTypes.length > 0 ? "✓" : "⚠"}</span>
+                  <span className="ml-2">
+                    Body Types: {bodyTypes.length > 0 ? bodyTypes.length : 'Not loaded'}
+                  </span>
+                </li>
               </ul>
               
               {vehicles.length === 0 && (
@@ -491,6 +513,18 @@ export default function VehicleLookup() {
                     <li>• Bed length data</li>
                     <li>• Body type details</li>
                   </ul>
+                </div>
+              )}
+              
+              {vehicles.length > 0 && bodyTypes.length > 0 && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
+                  <p className="text-xs font-semibold text-green-900 mb-1">✓ Full Dataset Loaded</p>
+                  <p className="text-xs text-green-800">
+                    Vehicle and BodyType data available. SubModels are now filtered accurately.
+                  </p>
+                  <p className="text-xs text-green-700 mt-2">
+                    <strong>Truck cab info:</strong> Check BodyType for pickup variations (Standard Cab, Extended Cab, Crew Cab)
+                  </p>
                 </div>
               )}
             </div>

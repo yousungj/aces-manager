@@ -1,0 +1,44 @@
+[{"BodyTypeID":5,"BodyTypeName":"Sedan"}
+,{"BodyTypeID":6,"BodyTypeName":"Wagon"}
+,{"BodyTypeID":8,"BodyTypeName":"Hatchback"}
+,{"BodyTypeID":9,"BodyTypeName":"Coupe"}
+,{"BodyTypeID":10,"BodyTypeName":"Convertible"}
+,{"BodyTypeID":11,"BodyTypeName":"Sport Utility"}
+,{"BodyTypeID":13,"BodyTypeName":"Hardtop"}
+,{"BodyTypeID":15,"BodyTypeName":"Mini Passenger Van"}
+,{"BodyTypeID":16,"BodyTypeName":"Van Camper"}
+,{"BodyTypeID":17,"BodyTypeName":"Standard Cab Pickup"}
+,{"BodyTypeID":18,"BodyTypeName":"Extended Cab Pickup"}
+,{"BodyTypeID":19,"BodyTypeName":"Limousine"}
+,{"BodyTypeID":21,"BodyTypeName":"Standard Passenger Van"}
+,{"BodyTypeID":22,"BodyTypeName":"Crew Cab Pickup"}
+,{"BodyTypeID":23,"BodyTypeName":"Standard Cargo Van"}
+,{"BodyTypeID":24,"BodyTypeName":"Extended Cargo Van"}
+,{"BodyTypeID":25,"BodyTypeName":"Extended Passenger Van"}
+,{"BodyTypeID":26,"BodyTypeName":"Cutaway Van"}
+,{"BodyTypeID":27,"BodyTypeName":"Mini Cargo Van"}
+,{"BodyTypeID":28,"BodyTypeName":"Cab & Chassis"}
+,{"BodyTypeID":34,"BodyTypeName":"Stripped Chassis"}
+,{"BodyTypeID":37,"BodyTypeName":"Delivery Van"}
+,{"BodyTypeID":40,"BodyTypeName":"U\/K"}
+,{"BodyTypeID":43,"BodyTypeName":"Extended Crew Cab Pickup"}
+,{"BodyTypeID":44,"BodyTypeName":"Targa"}
+,{"BodyTypeID":45,"BodyTypeName":"Hearse"}
+,{"BodyTypeID":49,"BodyTypeName":"Fastback"}
+,{"BodyTypeID":57,"BodyTypeName":"Straight Truck - Low Tilt"}
+,{"BodyTypeID":62,"BodyTypeName":"Bus (School) - Cab Forward"}
+,{"BodyTypeID":71,"BodyTypeName":"Stripped Chassis - Incomplete"}
+,{"BodyTypeID":99,"BodyTypeName":"Cab & Chassis - Crew Cab"}
+,{"BodyTypeID":102,"BodyTypeName":"Cutaway"}
+,{"BodyTypeID":104,"BodyTypeName":"Straight Truck - Low Crew Cab"}
+,{"BodyTypeID":106,"BodyTypeName":"Step Van - Van"}
+,{"BodyTypeID":109,"BodyTypeName":"Sedan Delivery"}
+,{"BodyTypeID":111,"BodyTypeName":"Cab & Chassis - Low Tilt"}
+,{"BodyTypeID":116,"BodyTypeName":"Step Van - Unknown"}
+,{"BodyTypeID":117,"BodyTypeName":"Cab & Chassis - Conventional"}
+,{"BodyTypeID":118,"BodyTypeName":"Crew Van"}
+,{"BodyTypeID":119,"BodyTypeName":"Extended Crew Van"}
+,{"BodyTypeID":100,"BodyTypeName":"Motorhome - Cutaway"}
+,{"BodyTypeID":59,"BodyTypeName":"Motorhome - Stripped Chassis"}
+,{"BodyTypeID":125,"BodyTypeName":"Sport Utility Coupe"}
+]

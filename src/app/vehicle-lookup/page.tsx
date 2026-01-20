@@ -242,6 +242,52 @@ export default function VehicleLookup() {
   const baseVehicleResult = useMemo(() => {
     if (!selectedYear || !selectedMake || !selectedModel) return null;
     
+    // If SubModel is selected, filter through Vehicle.json
+    if (selectedSubModel && vehicles.length > 0) {
+      // Find all base vehicle IDs that match Year/Make/Model
+      const matchingBaseVehicleIds = baseVehicles
+        .filter(v => 
+          v.YearID === parseInt(selectedYear) &&
+          v.MakeID === parseInt(selectedMake) &&
+          v.ModelID === parseInt(selectedModel)
+        )
+        .map(v => v.BaseVehicleID);
+      
+      // Find vehicles that match both the base vehicle IDs AND the selected SubModel
+      let matchingVehicles = vehicles.filter(v => 
+        matchingBaseVehicleIds.includes(v.BaseVehicleID) &&
+        v.SubmodelID === parseInt(selectedSubModel)
+      );
+      
+      // If Body Type is also selected, further filter by body type
+      if (selectedBodyType && vehicleToBodyStyleConfigs.length > 0 && bodyStyleConfigs.length > 0) {
+        // Get body style config IDs that match the selected body type
+        const matchingBodyStyleConfigIds = bodyStyleConfigs
+          .filter(c => c.BodyTypeID === parseInt(selectedBodyType))
+          .map(c => c.BodyStyleConfigID);
+        
+        // Get vehicle IDs that have these body style configs
+        const vehicleIdsWithBodyType = new Set(
+          vehicleToBodyStyleConfigs
+            .filter(v => matchingBodyStyleConfigIds.includes(v.BodyStyleConfigID))
+            .map(v => v.VehicleID)
+        );
+        
+        // Filter vehicles by body type
+        matchingVehicles = matchingVehicles.filter(v => vehicleIdsWithBodyType.has(v.VehicleID));
+      }
+      
+      // Return the first matching vehicle's base vehicle ID
+      if (matchingVehicles.length > 0) {
+        const baseVehicleId = matchingVehicles[0].BaseVehicleID;
+        return baseVehicles.find(bv => bv.BaseVehicleID === baseVehicleId) || null;
+      }
+      
+      // If no match found with SubModel, return null
+      return null;
+    }
+    
+    // If only Year/Make/Model selected (no SubModel), return first matching base vehicle
     const result = baseVehicles.find(v => 
       v.YearID === parseInt(selectedYear) &&
       v.MakeID === parseInt(selectedMake) &&
@@ -249,7 +295,7 @@ export default function VehicleLookup() {
     );
     
     return result || null;
-  }, [selectedYear, selectedMake, selectedModel, baseVehicles]);
+  }, [selectedYear, selectedMake, selectedModel, selectedSubModel, selectedBodyType, baseVehicles, vehicles, vehicleToBodyStyleConfigs, bodyStyleConfigs]);
 
   // Get selected names for display
   const selectedMakeName = makes.find(m => m.MakeID === parseInt(selectedMake))?.MakeName || '';

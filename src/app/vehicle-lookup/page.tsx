@@ -73,6 +73,19 @@ export default function VehicleLookup() {
   const [partNumber, setPartNumber] = useState<string>('');
   const [brandCode, setBrandCode] = useState<string>('GFLT');
   const [partTypeId, setPartTypeId] = useState<string>('1300');
+  
+  // Selected vehicles for batch XML generation
+  type SelectedVehicle = {
+    baseVehicleId: number;
+    year: number;
+    makeName: string;
+    modelName: string;
+    subModelId?: number;
+    subModelName?: string;
+    bodyTypeId?: number;
+    bodyTypeName?: string;
+  };
+  const [selectedVehicles, setSelectedVehicles] = useState<SelectedVehicle[]>([]);
 
   const BRAND_OPTIONS = [
     { code: 'DGQS', name: 'Motor Trend' },
@@ -358,9 +371,49 @@ export default function VehicleLookup() {
     alert(`Copied: ${text}`);
   };
 
-  const generateXML = () => {
+  const addVehicleToSelection = () => {
     if (!baseVehicleResult) {
       alert('Please select a vehicle first!');
+      return;
+    }
+
+    const newVehicle: SelectedVehicle = {
+      baseVehicleId: baseVehicleResult.BaseVehicleID,
+      year: baseVehicleResult.YearID,
+      makeName: selectedMakeName,
+      modelName: selectedModelName,
+      subModelId: selectedSubModel ? parseInt(selectedSubModel) : undefined,
+      subModelName: selectedSubModelName || undefined,
+      bodyTypeId: selectedBodyType ? parseInt(selectedBodyType) : undefined,
+      bodyTypeName: selectedBodyTypeName || undefined,
+    };
+
+    // Check for duplicates
+    const isDuplicate = selectedVehicles.some(v => 
+      v.baseVehicleId === newVehicle.baseVehicleId &&
+      v.subModelId === newVehicle.subModelId &&
+      v.bodyTypeId === newVehicle.bodyTypeId
+    );
+
+    if (isDuplicate) {
+      alert('This vehicle configuration is already added!');
+      return;
+    }
+
+    setSelectedVehicles([...selectedVehicles, newVehicle]);
+  };
+
+  const removeVehicleFromSelection = (index: number) => {
+    setSelectedVehicles(selectedVehicles.filter((_, i) => i !== index));
+  };
+
+  const clearAllVehicles = () => {
+    setSelectedVehicles([]);
+  };
+
+  const generateXML = () => {
+    if (selectedVehicles.length === 0) {
+      alert('Please add at least one vehicle to the selection!');
       return;
     }
     if (!partNumber.trim()) {
@@ -371,16 +424,26 @@ export default function VehicleLookup() {
     const currentDate = new Date().toISOString().split('T')[0];
     const brandName = BRAND_OPTIONS.find(b => b.code === brandCode)?.name || 'Unknown';
     
-    // Build XML with BaseVehicle + optional SubModel and BodyType
-    let vehicleSection = `    <BaseVehicle id="${baseVehicleResult.BaseVehicleID}" />`;
-    
-    if (selectedSubModel) {
-      vehicleSection += `\n    <SubModel id="${selectedSubModel}" />`;
-    }
-    
-    if (selectedBodyType) {
-      vehicleSection += `\n    <BodyType id="${selectedBodyType}" />`;
-    }
+    // Build App records for all selected vehicles
+    const appRecords = selectedVehicles.map((vehicle, index) => {
+      let vehicleSection = `    <BaseVehicle id="${vehicle.baseVehicleId}" />`;
+      
+      if (vehicle.subModelId) {
+        vehicleSection += `\n    <SubModel id="${vehicle.subModelId}" />`;
+      }
+      
+      if (vehicle.bodyTypeId) {
+        vehicleSection += `\n    <BodyType id="${vehicle.bodyTypeId}" />`;
+      }
+
+      return `  <App action="A" id="${index + 1}">
+${vehicleSection}
+    <Note></Note>
+    <Qty>1</Qty>
+    <PartType id="${partTypeId}" />
+    <Part>${partNumber}</Part>
+  </App>`;
+    }).join('\n');
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <ACES version="3.2">
@@ -399,13 +462,7 @@ export default function VehicleLookup() {
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
   </Header>
   <Apps>
-    <App action="A" id="1">
-${vehicleSection}
-      <Note></Note>
-      <Qty>1</Qty>
-      <PartType id="${partTypeId}" />
-      <Part>${partNumber}</Part>
-    </App>
+${appRecords}
   </Apps>
 </ACES>`;
 
@@ -414,13 +471,13 @@ ${vehicleSection}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${partNumber}_${selectedYear}_${selectedMakeName}_${selectedModelName}.xml`;
+    a.download = `${partNumber}_${selectedVehicles.length}_vehicles.xml`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert('XML file downloaded successfully!');
+    alert(`XML file with ${selectedVehicles.length} vehicle(s) downloaded successfully!`);
   };
 
   if (loading) {
@@ -689,6 +746,55 @@ ${vehicleSection}
                     )}
                   </div>
 
+                  {/* Add to Selection Button */}
+                  <button
+                    onClick={addVehicleToSelection}
+                    className="w-full apple-btn apple-btn-secondary px-4 py-2.5 text-sm"
+                  >
+                    ➕ Add this Vehicle to Selection
+                  </button>
+
+                  {/* Selected Vehicles List */}
+                  {selectedVehicles.length > 0 && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-purple-900">
+                          📋 Selected Vehicles ({selectedVehicles.length})
+                        </h4>
+                        <button
+                          onClick={clearAllVehicles}
+                          className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                        >
+                          Clear All
+                        </button>
+                      </div>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {selectedVehicles.map((vehicle, index) => (
+                          <div key={index} className="bg-white rounded-lg p-3 border border-purple-200">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="text-xs font-semibold text-gray-900">
+                                  {vehicle.year} {vehicle.makeName} {vehicle.modelName}
+                                </p>
+                                <p className="text-xs text-gray-600 mt-0.5">
+                                  BaseVehicle: {vehicle.baseVehicleId}
+                                  {vehicle.subModelName && ` • ${vehicle.subModelName}`}
+                                  {vehicle.bodyTypeName && ` • ${vehicle.bodyTypeName}`}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => removeVehicleFromSelection(index)}
+                                className="text-xs text-red-500 hover:text-red-700 ml-2"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* XML Generation Section */}
                   <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
                     <h4 className="text-sm font-semibold text-blue-900 mb-3">📄 Generate ACES XML</h4>
@@ -730,14 +836,20 @@ ${vehicleSection}
                       <button
                         onClick={generateXML}
                         className="w-full apple-btn apple-btn-primary px-4 py-2.5 text-sm"
+                        disabled={selectedVehicles.length === 0}
                       >
-                        📥 Download ACES XML
+                        📥 Download ACES XML ({selectedVehicles.length} vehicle{selectedVehicles.length !== 1 ? 's' : ''})
                       </button>
-                      <p className="text-xs text-blue-700">
-                        ✓ Will include: BaseVehicle ID {baseVehicleResult.BaseVehicleID}
-                        {selectedSubModel && ` + SubModel ${selectedSubModel}`}
-                        {selectedBodyType && ` + BodyType ${selectedBodyType}`}
-                      </p>
+                      {selectedVehicles.length > 0 && (
+                        <p className="text-xs text-blue-700">
+                          ✓ Will generate XML with {selectedVehicles.length} App record{selectedVehicles.length !== 1 ? 's' : ''}
+                        </p>
+                      )}
+                      {selectedVehicles.length === 0 && (
+                        <p className="text-xs text-yellow-700">
+                          ⚠ Add at least one vehicle to the selection above
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

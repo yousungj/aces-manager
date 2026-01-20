@@ -68,6 +68,32 @@ export default function VehicleLookup() {
   
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<BaseVehicle[]>([]);
+  
+  // XML Generation fields
+  const [partNumber, setPartNumber] = useState<string>('');
+  const [brandCode, setBrandCode] = useState<string>('GFLT');
+  const [partTypeId, setPartTypeId] = useState<string>('1300');
+
+  const BRAND_OPTIONS = [
+    { code: 'DGQS', name: 'Motor Trend' },
+    { code: 'JZXV', name: 'CAT' },
+    { code: 'GFLT', name: 'BDK' },
+    { code: 'JZBF', name: 'Motor Box' },
+    { code: 'JNLD', name: 'Carbella' },
+  ];
+
+  const PART_TYPE_OPTIONS = [
+    { name: 'Car cover', id: '1020' },
+    { name: 'Tonneau Cover', id: '1188' },
+    { name: 'SWC', id: '57008' },
+    { name: 'Trunk Mat', id: '47593' },
+    { name: 'Tailgate mat', id: '16121' },
+    { name: 'Mat', id: '1300' },
+    { name: 'Seat Cover', id: '1316' },
+    { name: 'Trunk Organizer', id: '14290' },
+    { name: 'Wiper Blade', id: '8852' },
+    { name: 'Windshield Snow Cover', id: '71066' },
+  ];
 
   // Load all data files
   useEffect(() => {
@@ -332,6 +358,71 @@ export default function VehicleLookup() {
     alert(`Copied: ${text}`);
   };
 
+  const generateXML = () => {
+    if (!baseVehicleResult) {
+      alert('Please select a vehicle first!');
+      return;
+    }
+    if (!partNumber.trim()) {
+      alert('Please enter a part number!');
+      return;
+    }
+
+    const currentDate = new Date().toISOString().split('T')[0];
+    const brandName = BRAND_OPTIONS.find(b => b.code === brandCode)?.name || 'Unknown';
+    
+    // Build XML with BaseVehicle + optional SubModel and BodyType
+    let vehicleSection = `    <BaseVehicle id="${baseVehicleResult.BaseVehicleID}" />`;
+    
+    if (selectedSubModel) {
+      vehicleSection += `\n    <SubModel id="${selectedSubModel}" />`;
+    }
+    
+    if (selectedBodyType) {
+      vehicleSection += `\n    <BodyType id="${selectedBodyType}" />`;
+    }
+
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<ACES version="3.2">
+  <Header>
+    <Company>BDK Auto</Company>
+    <SenderName>BDK User</SenderName>
+    <SenderPhone>000-000-0000</SenderPhone>
+    <TransferDate>${currentDate}</TransferDate>
+    <BrandAAIAID>${brandCode}</BrandAAIAID>
+    <DocumentTitle>ACES Vehicle Lookup Export</DocumentTitle>
+    <EffectiveDate>${currentDate}</EffectiveDate>
+    <ApprovedFor>US</ApprovedFor>
+    <SubmissionType>FULL</SubmissionType>
+    <VcdbVersionDate>2022-06-24</VcdbVersionDate>
+    <QdbVersionDate>2015-05-26</QdbVersionDate>
+    <PcdbVersionDate>2022-07-08</PcdbVersionDate>
+  </Header>
+  <Apps>
+    <App action="A" id="1">
+${vehicleSection}
+      <Note></Note>
+      <Qty>1</Qty>
+      <PartType id="${partTypeId}" />
+      <Part>${partNumber}</Part>
+    </App>
+  </Apps>
+</ACES>`;
+
+    // Download XML file
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${partNumber}_${selectedYear}_${selectedMakeName}_${selectedModelName}.xml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert('XML file downloaded successfully!');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
@@ -587,9 +678,67 @@ export default function VehicleLookup() {
                     {selectedSubModelName && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">SubModel:</span>
-                        <span className="font-medium text-gray-900">{selectedSubModelName}</span>
+                        <span className="font-medium text-gray-900">{selectedSubModelName} (ID: {selectedSubModel})</span>
                       </div>
                     )}
+                    {selectedBodyTypeName && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Body Type:</span>
+                        <span className="font-medium text-gray-900">{selectedBodyTypeName} (ID: {selectedBodyType})</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* XML Generation Section */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                    <h4 className="text-sm font-semibold text-blue-900 mb-3">📄 Generate ACES XML</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs font-medium text-blue-800 mb-1">Part Number</label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 rounded-lg border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white text-sm"
+                          placeholder="Enter part number"
+                          value={partNumber}
+                          onChange={(e) => setPartNumber(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-blue-800 mb-1">Brand</label>
+                        <select
+                          className="w-full px-3 py-2 rounded-lg border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white text-sm"
+                          value={brandCode}
+                          onChange={(e) => setBrandCode(e.target.value)}
+                        >
+                          {BRAND_OPTIONS.map(b => (
+                            <option key={b.code} value={b.code}>{b.code} - {b.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-blue-800 mb-1">Part Type</label>
+                        <select
+                          className="w-full px-3 py-2 rounded-lg border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white text-sm"
+                          value={partTypeId}
+                          onChange={(e) => setPartTypeId(e.target.value)}
+                        >
+                          {PART_TYPE_OPTIONS.map(p => (
+                            <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button
+                        onClick={generateXML}
+                        className="w-full apple-btn apple-btn-primary px-4 py-2.5 text-sm"
+                      >
+                        📥 Download ACES XML
+                      </button>
+                      <p className="text-xs text-blue-700">
+                        ✓ Will include: BaseVehicle ID {baseVehicleResult.BaseVehicleID}
+                        {selectedSubModel && ` + SubModel ${selectedSubModel}`}
+                        {selectedBodyType && ` + BodyType ${selectedBodyType}`}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : searchResults.length > 0 ? (

@@ -13,8 +13,7 @@ export function buildSeatCoverXml(rows: AcesRow[]) {
     <Company>BDK Auto</Company>
     <SenderName>BDK User</SenderName>
     <Date>${new Date().toISOString().split("T")[0]}</Date>
-  </Header>
-  <Apps>`; // 여기가 <Apps>여야 합니다.
+  </Header>`;
 
   // 2. 바디 (데이터 반복)
   const body = rows.map((row, index) => {
@@ -29,8 +28,7 @@ export function buildSeatCoverXml(rows: AcesRow[]) {
   }).join('\n');
 
   // 3. 푸터 (닫는 태그)
-  const footer = `  </Apps>
-</ACES>`;
+  const footer = `</ACES>`;
 
   // 합쳐서 리턴
   return header + '\n' + body + '\n' + footer;

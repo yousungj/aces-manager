@@ -42,8 +42,7 @@ function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): 
     <VcdbVersionDate>2022-06-24</VcdbVersionDate>
     <QdbVersionDate>2015-05-26</QdbVersionDate>
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
-  </Header>
-  <Apps>`;
+  </Header>`;
   
   // Generate App entries for each part number × each BaseVehicle ID
   let appId = 1;
@@ -61,7 +60,7 @@ function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): 
     }
   }
   
-  return header + '\n' + apps.join('\n') + '\n</Apps>\n</ACES>';
+  return header + '\n' + apps.join('\n') + '\n</ACES>';
 }
 
 export function buildMegaSuperXml(rows: AcesRow[]): string {

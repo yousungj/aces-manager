@@ -264,8 +264,7 @@ export default function TemplateEditor() {
     <VcdbVersionDate>2022-06-24</VcdbVersionDate>
     <QdbVersionDate>2015-05-26</QdbVersionDate>
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
-  </Header>
-  <Apps>`;
+  </Header>`;
 
     const apps = vehicleIds.map((baseVehicleId, index) => {
       return `    <App action="A" id="${index + 1}">
@@ -277,7 +276,7 @@ export default function TemplateEditor() {
     </App>`;
     }).join('\n');
 
-    const footer = `\n  </Apps>\n</ACES>`;
+    const footer = `\n</ACES>`;
     const xmlContent = header + '\n' + apps + footer;
 
     try {

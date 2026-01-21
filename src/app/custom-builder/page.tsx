@@ -24,6 +24,7 @@ const PART_TYPE_OPTIONS = [
   { name: "Trunk Organizer", id: "14290" },
   { name: "Wiper Blade", id: "8852" },
   { name: "Windshield Snow Cover", id: "71066" },
+  { name: "Sun Shade", id: "18851" },
 ];
 
 type SelectedVehicle = {

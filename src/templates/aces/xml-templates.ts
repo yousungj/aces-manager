@@ -108,7 +108,9 @@ function buildXmlFromIds(baseVehicleIds: string[] | number[], rows: AcesRow[]): 
     }
   }
   
-  return header + '\n' + apps.join('\n') + '\n</ACES>';
+  const recordCount = apps.length;
+  const footer = `  <Footer>\n    <RecordCount>${recordCount}</RecordCount>\n  </Footer>`;
+  return header + '\n' + apps.join('\n') + '\n' + footer + '\n</ACES>';
 }
 
 export function buildMegaSuperXml(rows: AcesRow[]): string {

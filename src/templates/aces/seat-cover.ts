@@ -27,8 +27,9 @@ export function buildSeatCoverXml(rows: AcesRow[]) {
     </App>`;
   }).join('\n');
 
-  // 3. 푸터 (닫는 태그)
-  const footer = `</ACES>`;
+  // 3. 푸터 (닫는 태그 + RecordCount)
+  const recordCount = rows.length;
+  const footer = `  <Footer>\n    <RecordCount>${recordCount}</RecordCount>\n  </Footer>\n</ACES>`;
 
   // 합쳐서 리턴
   return header + '\n' + body + '\n' + footer;

@@ -193,7 +193,8 @@ export default function CustomBuilder() {
       });
     });
 
-    const xmlContent = `${header}\n${apps.join('\n')}\n</ACES>`;
+    const recordCount = apps.length;
+    const xmlContent = `${header}\n${apps.join('\n')}\n  <Footer>\n    <RecordCount>${recordCount}</RecordCount>\n  </Footer>\n</ACES>`;
 
     // Download
     const blob = new Blob([xmlContent], { type: 'application/xml' });

@@ -331,7 +331,8 @@ export default function TemplateEditor() {
     </App>`;
     }).join('\n');
 
-    const footer = `\n</ACES>`;
+    const recordCount = vehicleIds.length;
+    const footer = `\n  <Footer>\n    <RecordCount>${recordCount}</RecordCount>\n  </Footer>\n</ACES>`;
     const xmlContent = header + '\n' + apps + footer;
 
     try {

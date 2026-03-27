@@ -106,6 +106,7 @@ export default function VehicleLookup() {
     { name: 'Trunk Organizer', id: '14290' },
     { name: 'Wiper Blade', id: '8852' },
     { name: 'Windshield Snow Cover', id: '71066' },
+    { name: 'Sunshade', id: '12353' },
   ];
 
   // Load all data files

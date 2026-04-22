@@ -127,6 +127,71 @@ const DEFAULT_TREE: Folder[] = [
   { id: "hubcap", name: "9. Hubcap", children: [
       { id: "uma2025-kt16", name: "UMA2025-KT16" },
     ]},
+  { id: "wiper", name: "10. Wiper", children: [
+      { id: "wiper-13x13", name: "WIPER-13x13" },
+      { id: "wiper-15x15", name: "WIPER-15x15" },
+      { id: "wiper-16x16", name: "WIPER-16x16" },
+      { id: "wiper-17x17", name: "WIPER-17x17" },
+      { id: "wiper-18x15", name: "WIPER-18x15" },
+      { id: "wiper-18x17", name: "WIPER-18x17" },
+      { id: "wiper-18x18", name: "WIPER-18x18" },
+      { id: "wiper-19x17", name: "WIPER-19x17" },
+      { id: "wiper-19x18", name: "WIPER-19x18" },
+      { id: "wiper-19x19", name: "WIPER-19x19" },
+      { id: "wiper-20x16", name: "WIPER-20x16" },
+      { id: "wiper-20x17", name: "WIPER-20x17" },
+      { id: "wiper-20x18", name: "WIPER-20x18" },
+      { id: "wiper-20x19", name: "WIPER-20x19" },
+      { id: "wiper-20x20", name: "WIPER-20x20" },
+      { id: "wiper-21x17", name: "WIPER-21x17" },
+      { id: "wiper-21x18", name: "WIPER-21x18" },
+      { id: "wiper-21x19", name: "WIPER-21x19" },
+      { id: "wiper-21x20", name: "WIPER-21x20" },
+      { id: "wiper-21x21", name: "WIPER-21x21" },
+      { id: "wiper-22x14", name: "WIPER-22x14" },
+      { id: "wiper-22x16", name: "WIPER-22x16" },
+      { id: "wiper-22x17", name: "WIPER-22x17" },
+      { id: "wiper-22x18", name: "WIPER-22x18" },
+      { id: "wiper-22x19", name: "WIPER-22x19" },
+      { id: "wiper-22x20", name: "WIPER-22x20" },
+      { id: "wiper-22x21", name: "WIPER-22x21" },
+      { id: "wiper-22x22", name: "WIPER-22x22" },
+      { id: "wiper-24x14", name: "WIPER-24x14" },
+      { id: "wiper-24x15", name: "WIPER-24x15" },
+      { id: "wiper-24x16", name: "WIPER-24x16" },
+      { id: "wiper-24x17", name: "WIPER-24x17" },
+      { id: "wiper-24x18", name: "WIPER-24x18" },
+      { id: "wiper-24x19", name: "WIPER-24x19" },
+      { id: "wiper-24x20", name: "WIPER-24x20" },
+      { id: "wiper-24x21", name: "WIPER-24x21" },
+      { id: "wiper-24x22", name: "WIPER-24x22" },
+      { id: "wiper-24x24", name: "WIPER-24x24" },
+      { id: "wiper-26x14", name: "WIPER-26x14" },
+      { id: "wiper-26x15", name: "WIPER-26x15" },
+      { id: "wiper-26x16", name: "WIPER-26x16" },
+      { id: "wiper-26x17", name: "WIPER-26x17" },
+      { id: "wiper-26x18", name: "WIPER-26x18" },
+      { id: "wiper-26x19", name: "WIPER-26x19" },
+      { id: "wiper-26x20", name: "WIPER-26x20" },
+      { id: "wiper-26x21", name: "WIPER-26x21" },
+      { id: "wiper-26x22", name: "WIPER-26x22" },
+      { id: "wiper-26x24", name: "WIPER-26x24" },
+      { id: "wiper-26x26", name: "WIPER-26x26" },
+      { id: "wiper-28x12", name: "WIPER-28x12" },
+      { id: "wiper-28x14", name: "WIPER-28x14" },
+      { id: "wiper-28x15", name: "WIPER-28x15" },
+      { id: "wiper-28x16", name: "WIPER-28x16" },
+      { id: "wiper-28x17", name: "WIPER-28x17" },
+      { id: "wiper-28x18", name: "WIPER-28x18" },
+      { id: "wiper-28x20", name: "WIPER-28x20" },
+      { id: "wiper-28x21", name: "WIPER-28x21" },
+      { id: "wiper-28x24", name: "WIPER-28x24" },
+      { id: "wiper-28x26", name: "WIPER-28x26" },
+      { id: "wiper-28x28", name: "WIPER-28x28" },
+    ]},
+  { id: "aces-delete-cat", name: "11. ACES Delete Template", children: [
+      { id: "aces-delete", name: "ACES Delete Template", description: "action=\"D\" over all prior BaseVehicleIDs" },
+    ]},
 ];
 
 function classNames(...classes: (string | false | undefined)[]) {
@@ -168,7 +233,8 @@ function parseBulkParts(text: string): string[] {
 export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
-      const saved = localStorage.getItem("aces_tree_v1");
+      // v2 bumped when adding Wiper + ACES Delete Template categories
+      const saved = localStorage.getItem("aces_tree_v2");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

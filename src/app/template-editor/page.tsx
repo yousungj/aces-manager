@@ -102,6 +102,69 @@ const TEMPLATES: TemplateOption[] = [
   { id: "CAMT-3713-BK", name: "CAMT-3713-BK", filePath: "/data/camt-3713-bk-ids.json", category: "Floor Mat", vehicleType: "Universal", description: "CAT® JustFit™ 3D Custom Fit Floor Mats for Honda CRV 2023-2026" },
   // --- Hubcap ---
   { id: "UMA2025-KT16", name: "UMA2025-KT16", filePath: "/data/uma2025-kt16-ids.json", category: "Hubcap", description: "Old ACES / Current" },
+  // --- Wiper (by size, from aces_by_size_v6) ---
+  { id: "wiper-13x13", name: "Wiper 13x13", filePath: "/data/wiper-13x13-ids.json", category: "Wiper", coverSize: "13x13", vehicleType: "Universal" },
+  { id: "wiper-15x15", name: "Wiper 15x15", filePath: "/data/wiper-15x15-ids.json", category: "Wiper", coverSize: "15x15", vehicleType: "Universal" },
+  { id: "wiper-16x16", name: "Wiper 16x16", filePath: "/data/wiper-16x16-ids.json", category: "Wiper", coverSize: "16x16", vehicleType: "Universal" },
+  { id: "wiper-17x17", name: "Wiper 17x17", filePath: "/data/wiper-17x17-ids.json", category: "Wiper", coverSize: "17x17", vehicleType: "Universal" },
+  { id: "wiper-18x15", name: "Wiper 18x15", filePath: "/data/wiper-18x15-ids.json", category: "Wiper", coverSize: "18x15", vehicleType: "Universal" },
+  { id: "wiper-18x17", name: "Wiper 18x17", filePath: "/data/wiper-18x17-ids.json", category: "Wiper", coverSize: "18x17", vehicleType: "Universal" },
+  { id: "wiper-18x18", name: "Wiper 18x18", filePath: "/data/wiper-18x18-ids.json", category: "Wiper", coverSize: "18x18", vehicleType: "Universal" },
+  { id: "wiper-19x17", name: "Wiper 19x17", filePath: "/data/wiper-19x17-ids.json", category: "Wiper", coverSize: "19x17", vehicleType: "Universal" },
+  { id: "wiper-19x18", name: "Wiper 19x18", filePath: "/data/wiper-19x18-ids.json", category: "Wiper", coverSize: "19x18", vehicleType: "Universal" },
+  { id: "wiper-19x19", name: "Wiper 19x19", filePath: "/data/wiper-19x19-ids.json", category: "Wiper", coverSize: "19x19", vehicleType: "Universal" },
+  { id: "wiper-20x16", name: "Wiper 20x16", filePath: "/data/wiper-20x16-ids.json", category: "Wiper", coverSize: "20x16", vehicleType: "Universal" },
+  { id: "wiper-20x17", name: "Wiper 20x17", filePath: "/data/wiper-20x17-ids.json", category: "Wiper", coverSize: "20x17", vehicleType: "Universal" },
+  { id: "wiper-20x18", name: "Wiper 20x18", filePath: "/data/wiper-20x18-ids.json", category: "Wiper", coverSize: "20x18", vehicleType: "Universal" },
+  { id: "wiper-20x19", name: "Wiper 20x19", filePath: "/data/wiper-20x19-ids.json", category: "Wiper", coverSize: "20x19", vehicleType: "Universal" },
+  { id: "wiper-20x20", name: "Wiper 20x20", filePath: "/data/wiper-20x20-ids.json", category: "Wiper", coverSize: "20x20", vehicleType: "Universal" },
+  { id: "wiper-21x17", name: "Wiper 21x17", filePath: "/data/wiper-21x17-ids.json", category: "Wiper", coverSize: "21x17", vehicleType: "Universal" },
+  { id: "wiper-21x18", name: "Wiper 21x18", filePath: "/data/wiper-21x18-ids.json", category: "Wiper", coverSize: "21x18", vehicleType: "Universal" },
+  { id: "wiper-21x19", name: "Wiper 21x19", filePath: "/data/wiper-21x19-ids.json", category: "Wiper", coverSize: "21x19", vehicleType: "Universal" },
+  { id: "wiper-21x20", name: "Wiper 21x20", filePath: "/data/wiper-21x20-ids.json", category: "Wiper", coverSize: "21x20", vehicleType: "Universal" },
+  { id: "wiper-21x21", name: "Wiper 21x21", filePath: "/data/wiper-21x21-ids.json", category: "Wiper", coverSize: "21x21", vehicleType: "Universal" },
+  { id: "wiper-22x14", name: "Wiper 22x14", filePath: "/data/wiper-22x14-ids.json", category: "Wiper", coverSize: "22x14", vehicleType: "Universal" },
+  { id: "wiper-22x16", name: "Wiper 22x16", filePath: "/data/wiper-22x16-ids.json", category: "Wiper", coverSize: "22x16", vehicleType: "Universal" },
+  { id: "wiper-22x17", name: "Wiper 22x17", filePath: "/data/wiper-22x17-ids.json", category: "Wiper", coverSize: "22x17", vehicleType: "Universal" },
+  { id: "wiper-22x18", name: "Wiper 22x18", filePath: "/data/wiper-22x18-ids.json", category: "Wiper", coverSize: "22x18", vehicleType: "Universal" },
+  { id: "wiper-22x19", name: "Wiper 22x19", filePath: "/data/wiper-22x19-ids.json", category: "Wiper", coverSize: "22x19", vehicleType: "Universal" },
+  { id: "wiper-22x20", name: "Wiper 22x20", filePath: "/data/wiper-22x20-ids.json", category: "Wiper", coverSize: "22x20", vehicleType: "Universal" },
+  { id: "wiper-22x21", name: "Wiper 22x21", filePath: "/data/wiper-22x21-ids.json", category: "Wiper", coverSize: "22x21", vehicleType: "Universal" },
+  { id: "wiper-22x22", name: "Wiper 22x22", filePath: "/data/wiper-22x22-ids.json", category: "Wiper", coverSize: "22x22", vehicleType: "Universal" },
+  { id: "wiper-24x14", name: "Wiper 24x14", filePath: "/data/wiper-24x14-ids.json", category: "Wiper", coverSize: "24x14", vehicleType: "Universal" },
+  { id: "wiper-24x15", name: "Wiper 24x15", filePath: "/data/wiper-24x15-ids.json", category: "Wiper", coverSize: "24x15", vehicleType: "Universal" },
+  { id: "wiper-24x16", name: "Wiper 24x16", filePath: "/data/wiper-24x16-ids.json", category: "Wiper", coverSize: "24x16", vehicleType: "Universal" },
+  { id: "wiper-24x17", name: "Wiper 24x17", filePath: "/data/wiper-24x17-ids.json", category: "Wiper", coverSize: "24x17", vehicleType: "Universal" },
+  { id: "wiper-24x18", name: "Wiper 24x18", filePath: "/data/wiper-24x18-ids.json", category: "Wiper", coverSize: "24x18", vehicleType: "Universal" },
+  { id: "wiper-24x19", name: "Wiper 24x19", filePath: "/data/wiper-24x19-ids.json", category: "Wiper", coverSize: "24x19", vehicleType: "Universal" },
+  { id: "wiper-24x20", name: "Wiper 24x20", filePath: "/data/wiper-24x20-ids.json", category: "Wiper", coverSize: "24x20", vehicleType: "Universal" },
+  { id: "wiper-24x21", name: "Wiper 24x21", filePath: "/data/wiper-24x21-ids.json", category: "Wiper", coverSize: "24x21", vehicleType: "Universal" },
+  { id: "wiper-24x22", name: "Wiper 24x22", filePath: "/data/wiper-24x22-ids.json", category: "Wiper", coverSize: "24x22", vehicleType: "Universal" },
+  { id: "wiper-24x24", name: "Wiper 24x24", filePath: "/data/wiper-24x24-ids.json", category: "Wiper", coverSize: "24x24", vehicleType: "Universal" },
+  { id: "wiper-26x14", name: "Wiper 26x14", filePath: "/data/wiper-26x14-ids.json", category: "Wiper", coverSize: "26x14", vehicleType: "Universal" },
+  { id: "wiper-26x15", name: "Wiper 26x15", filePath: "/data/wiper-26x15-ids.json", category: "Wiper", coverSize: "26x15", vehicleType: "Universal" },
+  { id: "wiper-26x16", name: "Wiper 26x16", filePath: "/data/wiper-26x16-ids.json", category: "Wiper", coverSize: "26x16", vehicleType: "Universal" },
+  { id: "wiper-26x17", name: "Wiper 26x17", filePath: "/data/wiper-26x17-ids.json", category: "Wiper", coverSize: "26x17", vehicleType: "Universal" },
+  { id: "wiper-26x18", name: "Wiper 26x18", filePath: "/data/wiper-26x18-ids.json", category: "Wiper", coverSize: "26x18", vehicleType: "Universal" },
+  { id: "wiper-26x19", name: "Wiper 26x19", filePath: "/data/wiper-26x19-ids.json", category: "Wiper", coverSize: "26x19", vehicleType: "Universal" },
+  { id: "wiper-26x20", name: "Wiper 26x20", filePath: "/data/wiper-26x20-ids.json", category: "Wiper", coverSize: "26x20", vehicleType: "Universal" },
+  { id: "wiper-26x21", name: "Wiper 26x21", filePath: "/data/wiper-26x21-ids.json", category: "Wiper", coverSize: "26x21", vehicleType: "Universal" },
+  { id: "wiper-26x22", name: "Wiper 26x22", filePath: "/data/wiper-26x22-ids.json", category: "Wiper", coverSize: "26x22", vehicleType: "Universal" },
+  { id: "wiper-26x24", name: "Wiper 26x24", filePath: "/data/wiper-26x24-ids.json", category: "Wiper", coverSize: "26x24", vehicleType: "Universal" },
+  { id: "wiper-26x26", name: "Wiper 26x26", filePath: "/data/wiper-26x26-ids.json", category: "Wiper", coverSize: "26x26", vehicleType: "Universal" },
+  { id: "wiper-28x12", name: "Wiper 28x12", filePath: "/data/wiper-28x12-ids.json", category: "Wiper", coverSize: "28x12", vehicleType: "Universal" },
+  { id: "wiper-28x14", name: "Wiper 28x14", filePath: "/data/wiper-28x14-ids.json", category: "Wiper", coverSize: "28x14", vehicleType: "Universal" },
+  { id: "wiper-28x15", name: "Wiper 28x15", filePath: "/data/wiper-28x15-ids.json", category: "Wiper", coverSize: "28x15", vehicleType: "Universal" },
+  { id: "wiper-28x16", name: "Wiper 28x16", filePath: "/data/wiper-28x16-ids.json", category: "Wiper", coverSize: "28x16", vehicleType: "Universal" },
+  { id: "wiper-28x17", name: "Wiper 28x17", filePath: "/data/wiper-28x17-ids.json", category: "Wiper", coverSize: "28x17", vehicleType: "Universal" },
+  { id: "wiper-28x18", name: "Wiper 28x18", filePath: "/data/wiper-28x18-ids.json", category: "Wiper", coverSize: "28x18", vehicleType: "Universal" },
+  { id: "wiper-28x20", name: "Wiper 28x20", filePath: "/data/wiper-28x20-ids.json", category: "Wiper", coverSize: "28x20", vehicleType: "Universal" },
+  { id: "wiper-28x21", name: "Wiper 28x21", filePath: "/data/wiper-28x21-ids.json", category: "Wiper", coverSize: "28x21", vehicleType: "Universal" },
+  { id: "wiper-28x24", name: "Wiper 28x24", filePath: "/data/wiper-28x24-ids.json", category: "Wiper", coverSize: "28x24", vehicleType: "Universal" },
+  { id: "wiper-28x26", name: "Wiper 28x26", filePath: "/data/wiper-28x26-ids.json", category: "Wiper", coverSize: "28x26", vehicleType: "Universal" },
+  { id: "wiper-28x28", name: "Wiper 28x28", filePath: "/data/wiper-28x28-ids.json", category: "Wiper", coverSize: "28x28", vehicleType: "Universal" },
+  // --- ACES Delete Template ---
+  { id: "aces-delete", name: "ACES Delete Template", filePath: "/data/aces-delete-ids.json", category: "ACES Delete Template", description: "Deletes every BaseVehicleID from prior submissions (action=D). Edit the list to target a subset." },
 ];
 
 export default function TemplateEditor() {
@@ -321,8 +384,10 @@ export default function TemplateEditor() {
     <PcdbVersionDate>2022-07-08</PcdbVersionDate>
   </Header>`;
 
+    // ACES Delete Template generates delete actions; everything else adds
+    const acesAction = selectedTemplate.category === "ACES Delete Template" ? "D" : "A";
     const apps = vehicleIds.map((baseVehicleId, index) => {
-      return `    <App action="A" id="${index + 1}">
+      return `    <App action="${acesAction}" id="${index + 1}">
       <BaseVehicle id="${baseVehicleId}" />
       <Note />
       <Qty>1</Qty>

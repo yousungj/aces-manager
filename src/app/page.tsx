@@ -192,6 +192,9 @@ const DEFAULT_TREE: Folder[] = [
   { id: "aces-delete-cat", name: "11. ACES Delete Template", children: [
       { id: "aces-delete", name: "ACES Delete Template", description: "action=\"D\" over all prior BaseVehicleIDs" },
     ]},
+  { id: "vehicle-type-cat", name: "12. Vehicle Type", children: [
+      { id: "truck-all", name: "Truck (All)", description: "All trucks (VehicleTypeID=6) from VCdb 2026-04-30 — 9,833 BaseVehicleIDs" },
+    ]},
 ];
 
 function classNames(...classes: (string | false | undefined)[]) {
@@ -233,8 +236,8 @@ function parseBulkParts(text: string): string[] {
 export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
-      // v2 bumped when adding Wiper + ACES Delete Template categories
-      const saved = localStorage.getItem("aces_tree_v2");
+      // v3 bumped when adding Vehicle Type → Truck (All) category
+      const saved = localStorage.getItem("aces_tree_v3");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

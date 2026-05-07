@@ -125,6 +125,7 @@ import {
   buildWiper28X28Xml,
   buildAcesDeleteXml,
 } from './aces/wiper-templates';
+import { buildTruckAllXml } from './aces/truck-templates';
 
 // Type for template functions
 type AcesRow = {
@@ -284,6 +285,9 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
 
   // ACES Delete Template (uses action="D")
   'aces-delete': buildAcesDeleteXml,
+
+  // Vehicle Type — Truck (all makes/models/years from VCdb 2026-04-30)
+  'truck-all': buildTruckAllXml,
 };
 
 // Helper function to get template for a subcategory

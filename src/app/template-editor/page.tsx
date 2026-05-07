@@ -165,6 +165,8 @@ const TEMPLATES: TemplateOption[] = [
   { id: "wiper-28x28", name: "Wiper 28x28", filePath: "/data/wiper-28x28-ids.json", category: "Wiper", coverSize: "28x28", vehicleType: "Universal" },
   // --- ACES Delete Template ---
   { id: "aces-delete", name: "ACES Delete Template", filePath: "/data/aces-delete-ids.json", category: "ACES Delete Template", description: "Deletes every BaseVehicleID from prior submissions (action=D). Edit the list to target a subset." },
+  // --- Vehicle Type ---
+  { id: "truck-all", name: "Truck (All)", filePath: "/data/truck-all-ids.json", category: "Vehicle Type", vehicleType: "Truck", description: "All trucks (VehicleTypeID=6) from VCdb 2026-04-30 — 9,833 BaseVehicleIDs across every truck make/model/year." },
 ];
 
 export default function TemplateEditor() {

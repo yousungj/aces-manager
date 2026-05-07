@@ -50,6 +50,8 @@ const PART_TYPE_OPTIONS: PartTypeOption[] = [
   { name: "Wiper Blade", id: "8852" },
   { name: "Windshield Snow Cover", id: "71066" },
   { name: "Sunshade", id: "12353" },
+  { name: "Truck Bed Liner", id: "1008" },
+  { name: "Hubcap", id: "10026" },
 ];
 
 const DEFAULT_TREE: Folder[] = [

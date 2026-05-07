@@ -20,7 +20,7 @@ echo "  ..."
 git diff --cached --name-only | tail -5
 
 echo "==> commit"
-git commit -m "Add Vehicle Type -> Truck (All) template (9,833 BVs)
+git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
 
 - New '12. Vehicle Type' category with a 'Truck (All)' subcategory
   covering every truck (VehicleTypeID=6) in the AutoCare VCdb
@@ -37,6 +37,9 @@ git commit -m "Add Vehicle Type -> Truck (All) template (9,833 BVs)
 - Bumped localStorage tree cache key aces_tree_v2 -> aces_tree_v3
   so existing clients pick up the new Vehicle Type folder on
   next load.
+
+- Added two PartType options to the dropdown (page.tsx and
+  custom-builder/page.tsx): Truck Bed Liner (1008), Hubcap (10026).
 "
 
 echo "==> push origin main"

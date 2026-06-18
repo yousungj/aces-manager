@@ -45,6 +45,15 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
   to SWC 15-inch. SWC 15-inch already had Wrangler 2000-2006 and
   2017-2026; this fills the missing decade so Wrangler coverage in
   15-inch is now continuous 2000-2026.
+
+- Boosted Mega Super coverage of recent model years (2024-2027) by
+  adding 853 BaseVehicleIDs from 32 mainstream brands (Mercedes-Benz,
+  BMW, Audi, Chevrolet, Toyota, Lexus, Ford, Volkswagen, Nissan,
+  Hyundai, Kia, GMC, Honda, Cadillac, Volvo, Ram, Mazda, Jeep,
+  Subaru, Genesis, Land Rover, Mitsubishi, Porsche, Dodge, Buick,
+  Acura, Lincoln, INFINITI, Mini, Jaguar, Chrysler, Tesla). Total
+  Mega Super now 10,888 BVs. Coverage of 2027 Car+Truck+Van jumped
+  from 0% to 83%.
 "
 
 echo "==> push origin main"

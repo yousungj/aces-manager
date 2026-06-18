@@ -40,6 +40,11 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
 
 - Added two PartType options to the dropdown (page.tsx and
   custom-builder/page.tsx): Truck Bed Liner (1008), Hubcap (10026).
+
+- Moved Jeep Wrangler 2007-2016 (10 BaseVehicleIDs) from SWC 16-inch
+  to SWC 15-inch. SWC 15-inch already had Wrangler 2000-2006 and
+  2017-2026; this fills the missing decade so Wrangler coverage in
+  15-inch is now continuous 2000-2026.
 "
 
 echo "==> push origin main"

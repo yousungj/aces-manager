@@ -54,6 +54,16 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
   Acura, Lincoln, INFINITI, Mini, Jaguar, Chrysler, Tesla). Total
   Mega Super now 10,888 BVs. Coverage of 2027 Car+Truck+Van jumped
   from 0% to 83%.
+
+- Synced Mega Super against AutoCare VCdb release 2026-05-28
+  (one month after the prior 2026-04-30 sync). Added 42 newly
+  cataloged mainstream BVs: mostly 2027 model year additions
+  (BMW M3/M4/X6/X7/i5/5-series/7-series, Audi Q5/SQ5/Q4 e-tron,
+  Chevrolet/GMC HD pickups, Ford F-250/F-350 Super Duty, Toyota
+  RAV4/Mirai, Honda Pilot, Jeep Cherokee, Kia EV4/Carnival,
+  Hyundai Kona Electric, VW Golf R/GTI/ID. Buzz, Volvo XC60,
+  Acura Integra, Chrysler Grand Caravan, plus Ram 700 2026).
+  Total Mega Super now 10,930 BVs; 2027 mainstream coverage 100%.
 "
 
 echo "==> push origin main"

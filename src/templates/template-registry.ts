@@ -6,6 +6,7 @@ import {
   buildSwc16InchXml,
   buildSwc15InchJun2026Xml,
   buildSwc16InchJun2026Xml,
+  buildScWoIhrJun2026Xml,
   buildVc0Xml,
   buildVc1Xml,
   buildVc2Xml,
@@ -145,6 +146,8 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'mega-super': buildMegaSuperXml,
   'mega-wo-int': buildScWoIhrXml,
   'sc-wo-ihr': buildScWoIhrXml,
+  // Jun 2026 update — deduped + 572 new BVs (existing-model new years + selected popular non-IHR)
+  'sc-wo-ihr-jun2026': buildScWoIhrJun2026Xml,
 
   // SWC templates
   'swc-s': buildSwc15InchXml,

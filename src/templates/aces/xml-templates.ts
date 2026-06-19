@@ -1,6 +1,7 @@
 // Import the pre-extracted BaseVehicle IDs
 import megaSuperIds from './data/mega-super-ids.json';
 import scWoIhrIds from './data/sc-wo-ihr-ids.json';
+import scWoIhrJun2026Ids from './data/sc-wo-ihr-jun2026-ids.json';
 import swc15InchIds from './data/swc-15inch-ids.json';
 import swc16InchIds from './data/swc-16inch-ids.json';
 import swc15InchJun2026Ids from './data/swc-15inch-jun2026-ids.json';
@@ -121,6 +122,11 @@ export function buildMegaSuperXml(rows: AcesRow[]): string {
 
 export function buildScWoIhrXml(rows: AcesRow[]): string {
   return buildXmlFromIds(scWoIhrIds, rows);
+}
+
+// Jun 2026 update — deduped + 572 new BVs (existing-model new years + selected popular non-IHR models)
+export function buildScWoIhrJun2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(scWoIhrJun2026Ids, rows);
 }
 
 export function buildSwc15InchXml(rows: AcesRow[]): string {

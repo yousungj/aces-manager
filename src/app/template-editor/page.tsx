@@ -52,6 +52,7 @@ const TEMPLATES: TemplateOption[] = [
   // --- Seat Cover ---
   { id: "mega-super", name: "Mega Super", filePath: "/data/mega-super-ids.json", category: "Seat Cover" },
   { id: "sc-wo-ihr", name: "Seat Cover WO IHR", filePath: "/data/sc-wo-ihr-ids.json", category: "Seat Cover" },
+  { id: "sc-wo-ihr-jun2026", name: "Seat Cover WO IHR (Jun 2026 update)", filePath: "/data/sc-wo-ihr-jun2026-ids.json", category: "Seat Cover", description: "Updated 2026-06-19 — deduped + curated 2024-2027 expansion. Excludes Tesla 3/S/X/Y/Cybertruck, Audi Q6 e-tron, all sport bucket (Porsche 911/718/Taycan, BMW M-series, Mercedes AMG/SL, Audi RS, Toyota GR, BRZ, Nissan Z, MX-5, Ioniq N). Includes Audi A7 2016-2017 and Chrysler Pacifica 2004-2008. 13,917 BVs." },
   { id: "SC-Fronts-Reduced-2026", name: "SC-Fronts-Reduced-2026", filePath: "/data/sc-fronts-reduced-2026-ids.json", category: "Seat Cover", description: "Old ACES / Current" },
   { id: "SC-Fronts-Reduced-2026-Joven", name: "SC-Fronts-Reduced-2026-Joven", filePath: "/data/sc-fronts-reduced-2026-joven-ids.json", category: "Seat Cover", vehicleType: "Universal", description: "SC reduced fronts - Joven (pulled int. seatbelts etc)" },
   { id: "SC-Full_withBench_Reduced-2026", name: "SC-Full_withBench_Reduced-2026", filePath: "/data/sc-full-withbench-reduced-2026-ids.json", category: "Seat Cover", description: "Old ACES / Current" },

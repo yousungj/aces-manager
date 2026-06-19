@@ -58,6 +58,7 @@ const DEFAULT_TREE: Folder[] = [
   { id: "mega", name: "1. Seat Cover", children: [
       { id: "mega-super", name: "Mega Super" },
       { id: "mega-wo-int", name: "Seat Cover WO IHR" },
+      { id: "sc-wo-ihr-jun2026", name: "Seat Cover WO IHR (Jun 2026 update)", description: "Updated 2026-06-19 — deduped (43 dups removed) + curated 2024-2027 expansion. Excludes Tesla 3/S/X/Y (integrated headrests), Tesla Cybertruck, Audi Q6/SQ6 e-tron, Porsche 911/718/Taycan, BMW M3/M4/M5/Z4, Mercedes AMG GT/SL/GLE-GLC-GLS AMG/EQE-EQS AMG/S63 AMG, Audi RS, Toyota GR Supra/Corolla/86, Subaru BRZ, Nissan Z, Mazda MX-5, Hyundai Ioniq N variants. Includes Mercedes S/Maybach/EQS/EQE non-AMG, BMW iX/i5/i-series non-M, Lexus RZ, Cadillac EVs, Audi A7 2016-2017, Chrysler Pacifica 2004-2008. 13,917 BVs." },
       { id: "sc-fronts-2026", name: "SC-Fronts-Reduced-2026" },
       { id: "sc-fronts-2026-joven", name: "SC-Fronts-Reduced-2026-Joven" },
       { id: "sc-full-bench-2026", name: "SC-Full_withBench_Reduced-2026" },
@@ -241,7 +242,7 @@ export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
       // v3 bumped when adding Vehicle Type → Truck (All) category
-      const saved = localStorage.getItem("aces_tree_v4");
+      const saved = localStorage.getItem("aces_tree_v5");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

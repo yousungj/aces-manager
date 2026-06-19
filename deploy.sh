@@ -82,6 +82,40 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
 
 - Bumped localStorage tree cache key aces_tree_v3 -> aces_tree_v4
   so existing clients see the two new SWC Jun 2026 entries.
+
+- Added 'Seat Cover WO IHR (Jun 2026 update)' template version
+  alongside the legacy 'Seat Cover WO IHR'. New version: deduped
+  (43 dups removed) plus 572 additional BVs covering (a) the new
+  2024-2027 model years of every model already in the legacy WO
+  IHR list whose latest registered year was 2023+, and (b) a
+  curated set of popular non-IHR models that the legacy template
+  was missing entirely — Mercedes EQ-series and AMG lineup, BMW
+  iX1/iX2/iX3/i5/M5 Touring/2-series/etc., Audi A1/A6 Sportback
+  e-tron/RS e-tron GT Performance, Lexus RZ/UX300h/LX700h, Cadillac
+  ESCALADE IQ/OPTIQ/VISTIQ/CELESTIQ, GMC Hummer EV Pickup/SUV,
+  Kia EV3/EV4, Hyundai Ioniq 5 N/6 N/9, Volvo EX-series, Porsche
+  Taycan/Macan EV/911/Panamera/718 lineup, Mini Aceman/Countryman,
+  Toyota GR Corolla/GR Supra/GR86/Crown Signia/bZ, Acura ADX, Jeep
+  Recon/Wagoneer S, Chevy Bolt 2027, Rivian R2, Lucid Gravity
+  2027, plus Mercedes G-Class and S-Class trims. Explicitly
+  EXCLUDED: Tesla Cybertruck and Audi Q6 e-tron / SQ6 e-tron (user
+  confirmed these have integrated headrests). Total WO IHR Jun
+  2026 = 14,097 BVs (legacy 13,568 raw / 13,525 unique). Year
+  distribution of added BVs: 2024:93, 2025:119, 2026:161, 2027:199.
+
+- Bumped localStorage tree cache key aces_tree_v4 -> aces_tree_v5.
+
+- Refined Seat Cover WO IHR (Jun 2026 update) per user audit:
+  REMOVED 187 BVs that have integrated/sport-bucket headrests:
+  Tesla 3/S/X/Y all years (kept Roadster), Porsche 911/718/Taycan,
+  BMW M3/M4/M5/M5 Touring/M440i/Z4, Mercedes all AMG variants
+  (AMG GT 43/53/55/63, SL43/55/63 AMG, Maybach SL680, A35/A45/CLA45
+  AMG S, CLE53 AMG, GLC/GLE/GLS AMG variants, EQE/EQS AMG, S63 AMG
+  E Performance), Audi RS3/RS Q3/RS e-tron GT Performance, Toyota
+  GR Supra/GR Corolla/GR86/Supra, Subaru BRZ, Nissan Z, Mazda MX-5,
+  Hyundai Ioniq 5 N/6 N. ADDED 7 BVs: Audi A7 2016-2017 (catalog
+  gap) and Chrysler Pacifica 2004-2008 (1st-generation minivan).
+  Final WO IHR Jun 2026 = 13,917 BVs.
 "
 
 echo "==> push origin main"

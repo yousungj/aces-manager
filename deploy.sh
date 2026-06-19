@@ -64,6 +64,24 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
   Hyundai Kona Electric, VW Golf R/GTI/ID. Buzz, Volvo XC60,
   Acura Integra, Chrysler Grand Caravan, plus Ram 700 2026).
   Total Mega Super now 10,930 BVs; 2027 mainstream coverage 100%.
+
+- Added 'SWC 15 inch (Jun 2026 update)' and 'SWC 16 inch (Jun 2026
+  update)' template versions. Legacy 'SWC 15/16 inch' templates
+  remain untouched so prior submissions stay reproducible. The
+  Jun 2026 versions are: (a) deduped (legacy SWC 15 had 305 dup
+  entries), (b) year-by-year reassigned for the 14 overlapping
+  models per user-supplied SWC_template_by_year.xlsx (covers
+  Ram 1500, Ford Expedition/Flex, Honda Pilot/Ridgeline, Jeep
+  Cherokee/Compass/Grand Cherokee/Liberty, Nissan TITAN, Toyota
+  4Runner/Highlander/Land Cruiser/Sienna), and (c) extended with
+  newly cataloged 2026/2027 BVs from VCdb 2026-05-28 — but only
+  for models whose latest registered year was already 2023+
+  (preserves intentional bounded year ranges on older models).
+  Final counts: SWC 15 Jun 2026 = 1,633 BVs (legacy 1,884 raw /
+  1,579 unique), SWC 16 Jun 2026 = 735 BVs (legacy 791 raw).
+
+- Bumped localStorage tree cache key aces_tree_v3 -> aces_tree_v4
+  so existing clients see the two new SWC Jun 2026 entries.
 "
 
 echo "==> push origin main"

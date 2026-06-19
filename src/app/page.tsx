@@ -65,6 +65,8 @@ const DEFAULT_TREE: Folder[] = [
   { id: "swc", name: "2. Steering Wheel Cover", children: [
       { id: "swc-m", name: "SWC 15 inch" },
       { id: "swc-l", name: "SWC 16 inch" },
+      { id: "swc-15inch-jun2026", name: "SWC 15 inch (Jun 2026 update)", description: "Updated 2026-06-19 — deduped, year reassigned per SWC_template_by_year.xlsx, +2026/2027 new years from VCdb 2026-05-28. 1,633 BVs." },
+      { id: "swc-16inch-jun2026", name: "SWC 16 inch (Jun 2026 update)", description: "Updated 2026-06-19 — Excel-authoritative year assignments + 2026/2027 new years from VCdb 2026-05-28. 735 BVs." },
     ]},
   { id: "car-cover", name: "3. Car Cover", children: [
       { id: "cc-s", name: "Small (CC1)" },
@@ -239,7 +241,7 @@ export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
       // v3 bumped when adding Vehicle Type → Truck (All) category
-      const saved = localStorage.getItem("aces_tree_v3");
+      const saved = localStorage.getItem("aces_tree_v4");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

@@ -4,6 +4,8 @@ import {
   buildScWoIhrXml,
   buildSwc15InchXml,
   buildSwc16InchXml,
+  buildSwc15InchJun2026Xml,
+  buildSwc16InchJun2026Xml,
   buildVc0Xml,
   buildVc1Xml,
   buildVc2Xml,
@@ -150,6 +152,9 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'swc-l': buildSwc16InchXml,
   'swc-xl1': buildSwc15InchXml,
   'swc-15inch': buildSwc15InchXml,
+  // Jun 2026 update versions (deduped + Excel year reassignment + 2026/2027 new years)
+  'swc-15inch-jun2026': buildSwc15InchJun2026Xml,
+  'swc-16inch-jun2026': buildSwc16InchJun2026Xml,
 
   // Car Cover templates
   'cc-s': buildCc1Xml,

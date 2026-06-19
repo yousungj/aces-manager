@@ -3,6 +3,8 @@ import megaSuperIds from './data/mega-super-ids.json';
 import scWoIhrIds from './data/sc-wo-ihr-ids.json';
 import swc15InchIds from './data/swc-15inch-ids.json';
 import swc16InchIds from './data/swc-16inch-ids.json';
+import swc15InchJun2026Ids from './data/swc-15inch-jun2026-ids.json';
+import swc16InchJun2026Ids from './data/swc-16inch-jun2026-ids.json';
 import vc0Ids from './data/vc0-ids.json';
 import vc1Ids from './data/vc1-ids.json';
 import vc2Ids from './data/vc2-ids.json';
@@ -127,6 +129,15 @@ export function buildSwc15InchXml(rows: AcesRow[]): string {
 
 export function buildSwc16InchXml(rows: AcesRow[]): string {
   return buildXmlFromIds(swc16InchIds, rows);
+}
+
+// Jun 2026 update — deduped, year reassignments per SWC_template_by_year.xlsx, +2026/2027 new years
+export function buildSwc15InchJun2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(swc15InchJun2026Ids, rows);
+}
+
+export function buildSwc16InchJun2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(swc16InchJun2026Ids, rows);
 }
 
 export function buildVc0Xml(rows: AcesRow[]): string {

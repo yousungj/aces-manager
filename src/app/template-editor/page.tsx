@@ -58,6 +58,8 @@ const TEMPLATES: TemplateOption[] = [
   // --- Steering Wheel Cover ---
   { id: "swc-15inch", name: "SWC 15 inch", filePath: "/data/swc-15inch-ids.json", category: "Steering Wheel Cover", coverSize: "15 inch" },
   { id: "swc-16inch", name: "SWC 16 inch", filePath: "/data/swc-16inch-ids.json", category: "Steering Wheel Cover", coverSize: "16 inch" },
+  { id: "swc-15inch-jun2026", name: "SWC 15 inch (Jun 2026 update)", filePath: "/data/swc-15inch-jun2026-ids.json", category: "Steering Wheel Cover", coverSize: "15 inch", description: "Updated 2026-06-19 — deduped + Excel year reassignments + 2026/2027 new years. 1,633 BVs." },
+  { id: "swc-16inch-jun2026", name: "SWC 16 inch (Jun 2026 update)", filePath: "/data/swc-16inch-jun2026-ids.json", category: "Steering Wheel Cover", coverSize: "16 inch", description: "Updated 2026-06-19 — Excel-authoritative year assignments + 2026/2027 new years. 735 BVs." },
   // --- Windshield Cover ---
   { id: "AS-SMALL", name: "AS-SMALL", filePath: "/data/as-small-ids.json", category: "Windshield Cover", coverSize: "SMALL", vehicleType: "Universal", description: 'AutoAmericS windshield sunshade - SMALL (W-28.5" x L-59")' },
   { id: "AS-MEDIUM", name: "AS-MEDIUM", filePath: "/data/as-medium-ids.json", category: "Windshield Cover", coverSize: "MEDIUM", vehicleType: "Universal", description: 'AutoAmericS windshield sunshade - MEDIUM (W-32" x L-61")' },

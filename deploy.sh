@@ -105,6 +105,19 @@ git commit -m "Add Vehicle Type -> Truck (All) template + 2 new PartTypes
 
 - Bumped localStorage tree cache key aces_tree_v4 -> aces_tree_v5.
 
+- UI improvement: template version selector. Templates that have
+  multiple versions (Seat Cover WO IHR, SWC 15 inch, SWC 16 inch)
+  no longer show separate sibling entries in the left tree. Instead
+  the tree shows a single entry per template, and the right panel
+  surfaces a 'Version' dropdown that defaults to the latest version
+  ('Jun 2026 update') while still letting the user switch back to
+  the legacy original. Submission history is tracked per version
+  id, so each version keeps its own history independently. The
+  effective template id is computed from (subcategory + selected
+  version) and feeds both XML generation (getTemplateForSubcategory)
+  and the history view-button counter. Bumped localStorage tree
+  cache key aces_tree_v5 -> aces_tree_v6.
+
 - Refined Seat Cover WO IHR (Jun 2026 update) per user audit:
   REMOVED 187 BVs that have integrated/sport-bucket headrests:
   Tesla 3/S/X/Y all years (kept Roadster), Porsche 911/718/Taycan,

@@ -4,7 +4,8 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { getTemplateForSubcategory } from "../templates/template-registry";
 
-type Subcategory = { id: string; name: string; description?: string };
+type TemplateVersion = { id: string; label: string; description?: string };
+type Subcategory = { id: string; name: string; description?: string; versions?: TemplateVersion[] };
 type Folder = { id: string; name: string; children: Subcategory[] };
 type PathState = { level1: string | null; level2: string | null };
 type GenerateRow = { partNumber: string; partTypeId: string; brandAaiaId: string; baseVehicleId?: string };
@@ -57,17 +58,23 @@ const PART_TYPE_OPTIONS: PartTypeOption[] = [
 const DEFAULT_TREE: Folder[] = [
   { id: "mega", name: "1. Seat Cover", children: [
       { id: "mega-super", name: "Mega Super" },
-      { id: "mega-wo-int", name: "Seat Cover WO IHR" },
-      { id: "sc-wo-ihr-jun2026", name: "Seat Cover WO IHR (Jun 2026 update)", description: "Updated 2026-06-19 — deduped (43 dups removed) + curated 2024-2027 expansion. Excludes Tesla 3/S/X/Y (integrated headrests), Tesla Cybertruck, Audi Q6/SQ6 e-tron, Porsche 911/718/Taycan, BMW M3/M4/M5/Z4, Mercedes AMG GT/SL/GLE-GLC-GLS AMG/EQE-EQS AMG/S63 AMG, Audi RS, Toyota GR Supra/Corolla/86, Subaru BRZ, Nissan Z, Mazda MX-5, Hyundai Ioniq N variants. Includes Mercedes S/Maybach/EQS/EQE non-AMG, BMW iX/i5/i-series non-M, Lexus RZ, Cadillac EVs, Audi A7 2016-2017, Chrysler Pacifica 2004-2008. 13,917 BVs." },
+      { id: "mega-wo-int", name: "Seat Cover WO IHR", versions: [
+          { id: "sc-wo-ihr-jun2026", label: "Jun 2026 update (latest)", description: "13,917 BVs. Deduped + curated 2024-2027 expansion. Excludes Tesla 3/S/X/Y, Cybertruck, Audi Q6/SQ6 e-tron, Porsche 911/718/Taycan, BMW M-series, Mercedes AMG, Audi RS, Toyota GR, BRZ, Nissan Z, MX-5, Ioniq N. Includes Mercedes S/EQS/EQE non-AMG, BMW iX/i5 non-M, Lexus RZ, Cadillac EVs, Audi A7 2016-2017, Chrysler Pacifica 2004-2008." },
+          { id: "mega-wo-int", label: "Legacy (original)", description: "13,568 BVs (with 43 dups). Original template before Jun 2026 audit." },
+        ]},
       { id: "sc-fronts-2026", name: "SC-Fronts-Reduced-2026" },
       { id: "sc-fronts-2026-joven", name: "SC-Fronts-Reduced-2026-Joven" },
       { id: "sc-full-bench-2026", name: "SC-Full_withBench_Reduced-2026" },
     ]},
   { id: "swc", name: "2. Steering Wheel Cover", children: [
-      { id: "swc-m", name: "SWC 15 inch" },
-      { id: "swc-l", name: "SWC 16 inch" },
-      { id: "swc-15inch-jun2026", name: "SWC 15 inch (Jun 2026 update)", description: "Updated 2026-06-19 — deduped, year reassigned per SWC_template_by_year.xlsx, +2026/2027 new years from VCdb 2026-05-28. 1,633 BVs." },
-      { id: "swc-16inch-jun2026", name: "SWC 16 inch (Jun 2026 update)", description: "Updated 2026-06-19 — Excel-authoritative year assignments + 2026/2027 new years from VCdb 2026-05-28. 735 BVs." },
+      { id: "swc-m", name: "SWC 15 inch", versions: [
+          { id: "swc-15inch-jun2026", label: "Jun 2026 update (latest)", description: "1,633 unique BVs. Deduped (305 dups removed), year-by-year reassigned per SWC_template_by_year.xlsx, +2026/2027 new years from VCdb 2026-05-28." },
+          { id: "swc-m", label: "Legacy (original)", description: "1,884 raw entries (1,579 unique, 305 dups). Pre-Jun 2026 audit." },
+        ]},
+      { id: "swc-l", name: "SWC 16 inch", versions: [
+          { id: "swc-16inch-jun2026", label: "Jun 2026 update (latest)", description: "735 BVs. Excel-authoritative year assignments (overlap models reassigned to/from SWC 15) + 2026/2027 new years from VCdb 2026-05-28." },
+          { id: "swc-l", label: "Legacy (original)", description: "791 BVs. Pre-Jun 2026 audit, contained Jeep Wrangler 2007-2016 (since moved to SWC 15)." },
+        ]},
     ]},
   { id: "car-cover", name: "3. Car Cover", children: [
       { id: "cc-s", name: "Small (CC1)" },
@@ -242,7 +249,7 @@ export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
       // v3 bumped when adding Vehicle Type → Truck (All) category
-      const saved = localStorage.getItem("aces_tree_v5");
+      const saved = localStorage.getItem("aces_tree_v6");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });
@@ -290,6 +297,7 @@ export default function ACESManagerStep1() {
   }, []);
 
   const [path, setPath] = useState<PathState>({ level1: null, level2: null });
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [mode, setMode] = useState<"single" | "bulk">("single");
   const [singlePartNumber, setSinglePartNumber] = useState("");
   const [singleBrandCode, setSingleBrandCode] = useState("");
@@ -303,6 +311,29 @@ export default function ACESManagerStep1() {
   const selectedL1 = useMemo(() => level1.find(x => x.id === path.level1) || null, [level1, path.level1]);
   const level2 = useMemo(() => selectedL1?.children || [], [selectedL1]);
   const selectedTemplate = useMemo(() => level2.find(x => x.id === path.level2) || null, [level2, path.level2]);
+
+  // Reset version selection when the parent template changes; default to first (latest) version
+  React.useEffect(() => {
+    if (selectedTemplate?.versions && selectedTemplate.versions.length > 0) {
+      setSelectedVersionId(selectedTemplate.versions[0].id);
+    } else {
+      setSelectedVersionId(null);
+    }
+  }, [selectedTemplate]);
+
+  // Effective version (the one actually used for XML generation + history)
+  const effectiveVersion = useMemo(() => {
+    if (!selectedTemplate?.versions) return null;
+    return selectedTemplate.versions.find(v => v.id === selectedVersionId) || selectedTemplate.versions[0] || null;
+  }, [selectedTemplate, selectedVersionId]);
+
+  // The actual template id to use for XML generation and history tracking.
+  // If versions array is present, use the selected version's id; otherwise use the subcategory's own id.
+  const effectiveTemplateId = effectiveVersion?.id || selectedTemplate?.id || null;
+  const effectiveTemplateName = effectiveVersion
+    ? `${selectedTemplate?.name} — ${effectiveVersion.label}`
+    : (selectedTemplate?.name || "");
+
   const selectedBulkBrandName = BRAND_OPTIONS.find(b => b.code === bulkBrandCode)?.name || "";
   const selectedBulkPartTypeName = PART_TYPE_OPTIONS.find(p => p.id === bulkPartTypeId)?.name || "";
 
@@ -313,8 +344,8 @@ export default function ACESManagerStep1() {
       : parseBulkParts(bulkText).map(pn => ({ partNumber: pn, brandAaiaId: bulkBrandCode, partTypeId: bulkPartTypeId }));
     
     setLastPreview({
-      templateId: path.level2 || "unknown",
-      templateName: selectedTemplate?.name || "Unknown",
+      templateId: effectiveTemplateId || path.level2 || "unknown",
+      templateName: effectiveTemplateName || selectedTemplate?.name || "Unknown",
       mode,
       rows,
       note: "Preview only - no BaseVehicle linking yet"
@@ -336,10 +367,11 @@ export default function ACESManagerStep1() {
       return;
     }
 
-    // Get the template function for the selected subcategory
-    const templateFunc = getTemplateForSubcategory(selectedTemplate.id);
+    // Get the template function for the EFFECTIVE template (respects version selection)
+    const templateLookupId = effectiveTemplateId || selectedTemplate.id;
+    const templateFunc = getTemplateForSubcategory(templateLookupId);
     if (!templateFunc) {
-      alert(`No template configured for ${selectedTemplate.name}. Please contact administrator.`);
+      alert(`No template configured for ${effectiveTemplateName || selectedTemplate.name}. Please contact administrator.`);
       return;
     }
 
@@ -364,8 +396,8 @@ export default function ACESManagerStep1() {
       }, index * 100);
     });
 
-    // Show save prompt
-    setPendingSubmission({ templateId: selectedTemplate.id, templateName: selectedTemplate.name, rows });
+    // Show save prompt — use the EFFECTIVE template id so history is tracked per version
+    setPendingSubmission({ templateId: templateLookupId, templateName: effectiveTemplateName || selectedTemplate.name, rows });
     setShowSavePrompt(true);
   };
 
@@ -546,15 +578,38 @@ export default function ACESManagerStep1() {
                       <h2 className="text-3xl font-semibold text-gray-900" style={{ letterSpacing: '-0.03em' }}>Generate XML</h2>
                       <p className="text-gray-500 mt-1">Template: {selectedTemplate.name}</p>
                     </div>
-                    {submissionHistory[selectedTemplate.id]?.length > 0 && (
+                    {effectiveTemplateId && submissionHistory[effectiveTemplateId]?.length > 0 && (
                       <button
                         onClick={() => setShowHistory(true)}
                         className="apple-btn apple-btn-secondary px-4 py-2 text-sm"
                       >
-                        📋 View History ({submissionHistory[selectedTemplate.id].length})
+                        📋 View History ({submissionHistory[effectiveTemplateId].length})
                       </button>
                     )}
                   </div>
+
+                  {/* Version selector: appears only for templates that have multiple versions */}
+                  {selectedTemplate.versions && selectedTemplate.versions.length > 0 && (
+                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                      <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium text-gray-700">Version:</span>
+                          <select
+                            className="px-4 py-2 rounded-xl border border-blue-300 bg-white text-sm font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                            value={selectedVersionId || ""}
+                            onChange={e => setSelectedVersionId(e.target.value)}
+                          >
+                            {selectedTemplate.versions.map(v => (
+                              <option key={v.id} value={v.id}>{v.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {effectiveVersion?.description && (
+                          <p className="text-xs text-gray-600 flex-1 min-w-0">{effectiveVersion.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl mb-8 inline-flex">
                     <button onClick={() => setMode("single")} className={classNames("px-6 py-2.5 rounded-xl font-medium transition-all duration-200", mode === "single" ? "bg-white text-gray-900 shadow-md" : "text-gray-600 hover:text-gray-900")}>Single</button>
@@ -666,7 +721,7 @@ export default function ACESManagerStep1() {
           <div className="glass-card rounded-3xl p-8 max-w-3xl w-full max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-semibold text-gray-900">
-                Submission History: {selectedTemplate.name}
+                Submission History: {effectiveTemplateName || selectedTemplate.name}
               </h3>
               <button
                 onClick={() => setShowHistory(false)}
@@ -675,19 +730,19 @@ export default function ACESManagerStep1() {
                 ✕
               </button>
             </div>
-            
-            {submissionHistory[selectedTemplate.id]?.length > 0 ? (
+
+            {effectiveTemplateId && submissionHistory[effectiveTemplateId]?.length > 0 ? (
               <>
                 <div className="mb-4">
                   <button
-                    onClick={() => handleClearHistory(selectedTemplate.id)}
+                    onClick={() => handleClearHistory(effectiveTemplateId)}
                     className="text-sm text-red-500 hover:text-red-700 font-medium"
                   >
                     Clear All History
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {submissionHistory[selectedTemplate.id]
+                  {submissionHistory[effectiveTemplateId]
                     .sort((a, b) => b.timestamp - a.timestamp)
                     .map((record, index) => (
                       <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200">

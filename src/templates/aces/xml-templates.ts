@@ -15,6 +15,11 @@ import cc2Ids from './data/cc2-ids.json';
 import cc3Ids from './data/cc3-ids.json';
 import cc4Ids from './data/cc4-ids.json';
 import cc5Ids from './data/cc5-ids.json';
+import cc1Aug2026Ids from './data/cc1-aug2026-ids.json';
+import cc2Aug2026Ids from './data/cc2-aug2026-ids.json';
+import cc3Aug2026Ids from './data/cc3-aug2026-ids.json';
+import cc4Aug2026Ids from './data/cc4-aug2026-ids.json';
+import cc5Aug2026Ids from './data/cc5-aug2026-ids.json';
 // Windshield Cover (AS)
 import asSmallIds from './data/as-small-ids.json';
 import asMediumIds from './data/as-medium-ids.json';
@@ -180,6 +185,29 @@ export function buildCc4Xml(rows: AcesRow[]): string {
 
 export function buildCc5Xml(rows: AcesRow[]): string {
   return buildXmlFromIds(cc5Ids, rows);
+}
+
+// Aug 2026 update — deduped, stale VCdb IDs removed, +513 missing model-years
+// (existing-model new years from VCdb 2026-05-28, size-guide verified:
+//  CC1<=157in, CC2<=170in, CC3<=190in, CC4<=210in, CC5<=228in)
+export function buildCc1Aug2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc1Aug2026Ids, rows);
+}
+
+export function buildCc2Aug2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc2Aug2026Ids, rows);
+}
+
+export function buildCc3Aug2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc3Aug2026Ids, rows);
+}
+
+export function buildCc4Aug2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc4Aug2026Ids, rows);
+}
+
+export function buildCc5Aug2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc5Aug2026Ids, rows);
 }
 
 // --- Windshield Cover (AS) ---

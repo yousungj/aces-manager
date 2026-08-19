@@ -77,11 +77,26 @@ const DEFAULT_TREE: Folder[] = [
         ]},
     ]},
   { id: "car-cover", name: "3. Car Cover", children: [
-      { id: "cc-s", name: "Small (CC1)" },
-      { id: "cc-m", name: "Medium (CC2)" },
-      { id: "cc-l", name: "Large (CC3)" },
-      { id: "cc-xl1", name: "XL1 (CC4)" },
-      { id: "cc-xl2", name: "XL2 (CC5)" },
+      { id: "cc-s", name: "Small (CC1)", versions: [
+          { id: "cc-s-aug2026", label: "Aug 2026 update (latest)", description: "704 BVs (≤157in). Deduped (8 dups removed), +39 new model-years from VCdb 2026-05-28 (Miata 2025-26, Mini Cooper 2026, Swift 2007-2026, Prius C 2021, Yaris hatch 등). Aveo 2012+/Mazda2 2015+/Yaris 2022+/Countryman 2025+는 사이즈 초과로 CC2/CC3로 이동 배정." },
+          { id: "cc-s", label: "Legacy (original)", description: "673 raw entries (665 unique). Pre-Aug 2026 audit." },
+        ]},
+      { id: "cc-m", name: "Medium (CC2)", versions: [
+          { id: "cc-m-aug2026", label: "Aug 2026 update (latest)", description: "1,017 BVs (≤170in). +62 new model-years: Z4 2025-26, Nissan Z 2024-27, BRZ 2026-27, 718 Boxster 2025 + size-guide 이동분(Aveo 2012+, Mazda2 2015+, Yaris 2022+)." },
+          { id: "cc-m", label: "Legacy (original)", description: "955 BVs. Pre-Aug 2026 audit." },
+        ]},
+      { id: "cc-l", name: "Large (CC3)", versions: [
+          { id: "cc-l-aug2026", label: "Aug 2026 update (latest)", description: "4,485 BVs (≤190in). Deduped (46 dups), stale ID 1개 제거, +216 new model-years: Audi A4 2021-25/A5 2015-26, 911 2025-26, IS350 2025-27, SL 2025-26, Sentra/Altima 2026-27, WRX 2026, 2027MY 다수 + 이동분(320i/323i G20·E90 CC4→CC3, Forte5, Countryman)." },
+          { id: "cc-l", label: "Legacy (original)", description: "4,316 raw entries (4,270 unique). Pre-Aug 2026 audit." },
+        ]},
+      { id: "cc-xl1", name: "XL1 (CC4)", versions: [
+          { id: "cc-xl1-aug2026", label: "Aug 2026 update (latest)", description: "4,108 BVs (≤210in). Deduped (15 dups), stale ID 6개 제거, +164 new model-years: A6 2020-26, K5 2025-27, Panamera 2024-26, Taycan 2025-27, S/E-Class 2025-26, AMG GT 2024-26, 7-Series 2024-27, Camry/Accord 2027, 신형 Vanquish 2025-27(CC3→CC4) 등." },
+          { id: "cc-xl1", label: "Legacy (original)", description: "3,965 raw entries (3,950 unique). Pre-Aug 2026 audit." },
+        ]},
+      { id: "cc-xl2", name: "XL2 (CC5)", versions: [
+          { id: "cc-xl2-aug2026", label: "Aug 2026 update (latest)", description: "1,633 BVs (≤228in). +32 new model-years: Maybach S580/S680 2024-27, Ghost 2024-27, Flying Spur 2025-27, LS500 2025-26, G80/Charger 2027 + Phantom 2024-27 (227in, CC4→CC5 이동)." },
+          { id: "cc-xl2", label: "Legacy (original)", description: "1,601 BVs. Pre-Aug 2026 audit." },
+        ]},
     ]},
   { id: "suv-cover", name: "4. Vehicle Cover", children: [
       { id: "suv-l", name: "Small (VC0)" },
@@ -248,8 +263,8 @@ function parseBulkParts(text: string): string[] {
 export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
-      // v3 bumped when adding Vehicle Type → Truck (All) category
-      const saved = localStorage.getItem("aces_tree_v6");
+      // v7 bumped when adding Car Cover Aug 2026 update versions
+      const saved = localStorage.getItem("aces_tree_v7");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

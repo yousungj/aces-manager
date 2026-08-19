@@ -44,6 +44,11 @@ const TEMPLATES: TemplateOption[] = [
   { id: "cc3", name: "Car Cover Large", filePath: "/data/cc3-ids.json", category: "Car Cover", coverSize: "Large", vehicleType: "Car" },
   { id: "cc4", name: "Car Cover XL1", filePath: "/data/cc4-ids.json", category: "Car Cover", coverSize: "XL1", vehicleType: "Car" },
   { id: "cc5", name: "Car Cover XL2", filePath: "/data/cc5-ids.json", category: "Car Cover", coverSize: "XL2", vehicleType: "Car" },
+  { id: "cc1-aug2026", name: "Car Cover Small (Aug 2026 update)", filePath: "/data/cc1-aug2026-ids.json", category: "Car Cover", coverSize: "Small", vehicleType: "Car", description: "Updated 2026-08-19 — deduped + 39 new model-years from VCdb 2026-05-28, size-guide ≤157in. 704 BVs." },
+  { id: "cc2-aug2026", name: "Car Cover Medium (Aug 2026 update)", filePath: "/data/cc2-aug2026-ids.json", category: "Car Cover", coverSize: "Medium", vehicleType: "Car", description: "Updated 2026-08-19 — +62 new model-years incl. size-guide moves (Aveo/Mazda2/Yaris), ≤170in. 1,017 BVs." },
+  { id: "cc3-aug2026", name: "Car Cover Large (Aug 2026 update)", filePath: "/data/cc3-aug2026-ids.json", category: "Car Cover", coverSize: "Large", vehicleType: "Car", description: "Updated 2026-08-19 — deduped, 1 stale ID removed, +216 new model-years, ≤190in. 4,485 BVs." },
+  { id: "cc4-aug2026", name: "Car Cover XL1 (Aug 2026 update)", filePath: "/data/cc4-aug2026-ids.json", category: "Car Cover", coverSize: "XL1", vehicleType: "Car", description: "Updated 2026-08-19 — deduped, 6 stale IDs removed, +164 new model-years, ≤210in. 4,108 BVs." },
+  { id: "cc5-aug2026", name: "Car Cover XL2 (Aug 2026 update)", filePath: "/data/cc5-aug2026-ids.json", category: "Car Cover", coverSize: "XL2", vehicleType: "Car", description: "Updated 2026-08-19 — +32 new model-years incl. Phantom 2024-27 moved from XL1, ≤228in. 1,633 BVs." },
   // --- Vehicle Cover ---
   { id: "vc0", name: "Vehicle Cover Small", filePath: "/data/vc0-ids.json", category: "Vehicle Cover", coverSize: "Small", vehicleType: "SUV/Truck" },
   { id: "vc1", name: "Vehicle Cover Medium", filePath: "/data/vc1-ids.json", category: "Vehicle Cover", coverSize: "Medium", vehicleType: "SUV/Truck" },

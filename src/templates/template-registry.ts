@@ -16,6 +16,11 @@ import {
   buildCc3Xml,
   buildCc4Xml,
   buildCc5Xml,
+  buildCc1Aug2026Xml,
+  buildCc2Aug2026Xml,
+  buildCc3Aug2026Xml,
+  buildCc4Aug2026Xml,
+  buildCc5Aug2026Xml,
   // Windshield Cover
   buildAsSmallXml,
   buildAsMediumXml,
@@ -165,6 +170,13 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'cc-l': buildCc3Xml,
   'cc-xl1': buildCc4Xml,
   'cc-xl2': buildCc5Xml,
+  // Aug 2026 update — deduped + stale IDs removed + 513 missing model-years
+  // added from VCdb 2026-05-28, size-guide verified (157/170/190/210/228 inch)
+  'cc-s-aug2026': buildCc1Aug2026Xml,
+  'cc-m-aug2026': buildCc2Aug2026Xml,
+  'cc-l-aug2026': buildCc3Aug2026Xml,
+  'cc-xl1-aug2026': buildCc4Aug2026Xml,
+  'cc-xl2-aug2026': buildCc5Aug2026Xml,
 
   // SUV Cover templates (Vehicle Cover)
   'suv-l': buildVc0Xml,

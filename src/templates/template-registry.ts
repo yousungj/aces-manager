@@ -21,6 +21,7 @@ import {
   buildCc3Aug2026Xml,
   buildCc4Aug2026Xml,
   buildCc5Aug2026Xml,
+  buildCc3Cc4Xml,
   // Windshield Cover
   buildAsSmallXml,
   buildAsMediumXml,
@@ -177,6 +178,8 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'cc-l-aug2026': buildCc3Aug2026Xml,
   'cc-xl1-aug2026': buildCc4Aug2026Xml,
   'cc-xl2-aug2026': buildCc5Aug2026Xml,
+  // CC3+CC4 combined (Large + XL1, Aug 2026 data)
+  'cc3-cc4': buildCc3Cc4Xml,
 
   // SUV Cover templates (Vehicle Cover)
   'suv-l': buildVc0Xml,

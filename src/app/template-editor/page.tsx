@@ -49,6 +49,7 @@ const TEMPLATES: TemplateOption[] = [
   { id: "cc3-aug2026", name: "Car Cover Large (Aug 2026 update)", filePath: "/data/cc3-aug2026-ids.json", category: "Car Cover", coverSize: "Large", vehicleType: "Car", description: "Updated 2026-08-19 — deduped, 1 stale ID removed, +216 new model-years, ≤190in. 4,485 BVs." },
   { id: "cc4-aug2026", name: "Car Cover XL1 (Aug 2026 update)", filePath: "/data/cc4-aug2026-ids.json", category: "Car Cover", coverSize: "XL1", vehicleType: "Car", description: "Updated 2026-08-19 — deduped, 6 stale IDs removed, +164 new model-years, ≤210in. 4,108 BVs." },
   { id: "cc5-aug2026", name: "Car Cover XL2 (Aug 2026 update)", filePath: "/data/cc5-aug2026-ids.json", category: "Car Cover", coverSize: "XL2", vehicleType: "Car", description: "Updated 2026-08-19 — +32 new model-years incl. Phantom 2024-27 moved from XL1, ≤228in. 1,633 BVs." },
+  { id: "cc3-cc4", name: "CC3+CC4", filePath: "/data/cc3-cc4-ids.json", category: "Car Cover", coverSize: "Large+XL1", vehicleType: "Car", description: "CC3 Large + CC4 XL1 combined from the Aug 2026 data, no overlap, ≤210in. 8,593 BVs." },
   // --- Vehicle Cover ---
   { id: "vc0", name: "Vehicle Cover Small", filePath: "/data/vc0-ids.json", category: "Vehicle Cover", coverSize: "Small", vehicleType: "SUV/Truck" },
   { id: "vc1", name: "Vehicle Cover Medium", filePath: "/data/vc1-ids.json", category: "Vehicle Cover", coverSize: "Medium", vehicleType: "SUV/Truck" },

@@ -20,6 +20,7 @@ import cc2Aug2026Ids from './data/cc2-aug2026-ids.json';
 import cc3Aug2026Ids from './data/cc3-aug2026-ids.json';
 import cc4Aug2026Ids from './data/cc4-aug2026-ids.json';
 import cc5Aug2026Ids from './data/cc5-aug2026-ids.json';
+import cc3Cc4Ids from './data/cc3-cc4-ids.json';
 // Windshield Cover (AS)
 import asSmallIds from './data/as-small-ids.json';
 import asMediumIds from './data/as-medium-ids.json';
@@ -208,6 +209,11 @@ export function buildCc4Aug2026Xml(rows: AcesRow[]): string {
 
 export function buildCc5Aug2026Xml(rows: AcesRow[]): string {
   return buildXmlFromIds(cc5Aug2026Ids, rows);
+}
+
+// CC3+CC4 combined (Aug 2026 data) — Large + XL1 in one template, no overlap
+export function buildCc3Cc4Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(cc3Cc4Ids, rows);
 }
 
 // --- Windshield Cover (AS) ---

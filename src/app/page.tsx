@@ -97,6 +97,7 @@ const DEFAULT_TREE: Folder[] = [
           { id: "cc-xl2-aug2026", label: "Aug 2026 update (latest)", description: "1,633 BVs (≤228in). +32 new model-years: Maybach S580/S680 2024-27, Ghost 2024-27, Flying Spur 2025-27, LS500 2025-26, G80/Charger 2027 + Phantom 2024-27 (227in, CC4→CC5 이동)." },
           { id: "cc-xl2", label: "Legacy (original)", description: "1,601 BVs. Pre-Aug 2026 audit." },
         ]},
+      { id: "cc3-cc4", name: "CC3+CC4", description: "Large + XL1 통합 (≤210in). Aug 2026 데이터 기준 8,593 BVs, 중복 없음." },
     ]},
   { id: "suv-cover", name: "4. Vehicle Cover", children: [
       { id: "suv-l", name: "Small (VC0)" },
@@ -263,8 +264,8 @@ function parseBulkParts(text: string): string[] {
 export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
-      // v7 bumped when adding Car Cover Aug 2026 update versions
-      const saved = localStorage.getItem("aces_tree_v7");
+      // v8 bumped when adding the CC3+CC4 combined template
+      const saved = localStorage.getItem("aces_tree_v8");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

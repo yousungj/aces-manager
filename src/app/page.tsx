@@ -544,11 +544,17 @@ export default function ACESManagerStep1() {
             >
               🚗 Vehicle Lookup
             </Link>
-            <Link 
-              href="/asin-checker" 
+            <Link
+              href="/asin-checker"
               className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap"
             >
               🔍 ASIN Checker
+            </Link>
+            <Link
+              href="/walmart-checker"
+              className="apple-btn apple-btn-primary px-6 py-3 whitespace-nowrap"
+            >
+              🛒 Walmart Checker
             </Link>
           </div>
         </div>

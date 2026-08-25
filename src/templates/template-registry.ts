@@ -22,6 +22,12 @@ import {
   buildCc4Aug2026Xml,
   buildCc5Aug2026Xml,
   buildCc3Cc4Xml,
+  // Truck Cover (CATC)
+  buildCatc843Xml,
+  buildCatc844Xml,
+  buildCatc845Xml,
+  buildCatc846Xml,
+  buildCatc847Xml,
   // Windshield Cover
   buildAsSmallXml,
   buildAsMediumXml,
@@ -180,6 +186,13 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateFunction> = {
   'cc-xl2-aug2026': buildCc5Aug2026Xml,
   // CC3+CC4 combined (Large + XL1, Aug 2026 data)
   'cc3-cc4': buildCc3Cc4Xml,
+
+  // Truck Cover (CATC) — cab-specific with BodyType/BedLength refinements
+  'catc-843': buildCatc843Xml,
+  'catc-844': buildCatc844Xml,
+  'catc-845': buildCatc845Xml,
+  'catc-846': buildCatc846Xml,
+  'catc-847': buildCatc847Xml,
 
   // SUV Cover templates (Vehicle Cover)
   'suv-l': buildVc0Xml,

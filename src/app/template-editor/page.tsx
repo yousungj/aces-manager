@@ -55,6 +55,12 @@ const TEMPLATES: TemplateOption[] = [
   { id: "vc1", name: "Vehicle Cover Medium", filePath: "/data/vc1-ids.json", category: "Vehicle Cover", coverSize: "Medium", vehicleType: "SUV/Truck" },
   { id: "vc2", name: "Vehicle Cover Large", filePath: "/data/vc2-ids.json", category: "Vehicle Cover", coverSize: "Large", vehicleType: "SUV/Truck" },
   { id: "vc3", name: "Vehicle Cover XL", filePath: "/data/vc3-ids.json", category: "Vehicle Cover", coverSize: "XL", vehicleType: "SUV/Truck" },
+  // --- Truck Cover (CATC) --- id lists are unique BVs; actual XML also refines by BodyType(cab)/BedLength
+  { id: "catc-843", name: "Truck Cover Regular Cab (CATC-843)", filePath: "/data/catc-843-ids.json", category: "Truck Cover", coverSize: "208x70x65", vehicleType: "Truck", description: "Compact/mid-size regular cab, max bed 90in. 500 BVs (500 apps)." },
+  { id: "catc-844", name: "Truck Cover Ext & Crew Cab (CATC-844)", filePath: "/data/catc-844-ids.json", category: "Truck Cover", coverSize: "232x75x65", vehicleType: "Truck", description: "Compact/mid-size extended & crew cab, max bed 84in. 407 BVs (527 apps)." },
+  { id: "catc-845", name: "Truck Cover Full Reg Cab (CATC-845)", filePath: "/data/catc-845-ids.json", category: "Truck Cover", coverSize: "230x75x65", vehicleType: "Truck", description: "Full-size regular cab, max bed 96in. 1,572 BVs (1,735 apps incl. bed-length splits)." },
+  { id: "catc-846", name: "Truck Cover Full Ext Cab (CATC-846)", filePath: "/data/catc-846-ids.json", category: "Truck Cover", coverSize: "250x80x65", vehicleType: "Truck", description: "Full-size extended/quad cab + short crew EVs, max bed 96in. 772 BVs (773 apps)." },
+  { id: "catc-847", name: "Truck Cover Full Crew Cab (CATC-847)", filePath: "/data/catc-847-ids.json", category: "Truck Cover", coverSize: "264x80x65", vehicleType: "Truck", description: "Full-size crew cab, max bed 96in. 709 BVs (791 apps). Hummer EV excluded (86.7in wide)." },
   // --- Seat Cover ---
   { id: "mega-super", name: "Mega Super", filePath: "/data/mega-super-ids.json", category: "Seat Cover" },
   { id: "sc-wo-ihr", name: "Seat Cover WO IHR", filePath: "/data/sc-wo-ihr-ids.json", category: "Seat Cover" },

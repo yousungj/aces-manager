@@ -223,6 +223,13 @@ const DEFAULT_TREE: Folder[] = [
   { id: "vehicle-type-cat", name: "12. Vehicle Type", children: [
       { id: "truck-all", name: "Truck (All)", description: "All trucks (VehicleTypeID=6) from VCdb 2026-04-30 — 9,833 BaseVehicleIDs" },
     ]},
+  { id: "truck-cover", name: "13. Truck Cover", children: [
+      { id: "catc-843", name: "Regular Cab (CATC-843)", description: "컴팩트/미드사이즈 레귤러캡. 208x70x65, max bed 90in. 500 apps (Ranger·S10·Tacoma reg 등). 캡별 BodyType + 롱베드 BedLength 분리 적용." },
+      { id: "catc-844", name: "Extended & Crew Cab (CATC-844)", description: "컴팩트/미드사이즈 확장·크루캡. 232x75x65, max bed 84in. 527 apps (Tacoma Double·Colorado Crew·Maverick·Gladiator JT 등)." },
+      { id: "catc-845", name: "Full Size Regular Cab (CATC-845)", description: "풀사이즈 레귤러캡. 230x75x65, max bed 96in. 1,735 apps (F-150/250/350·Silverado·Ram reg + Dakota/T100 롱베드 승격분)." },
+      { id: "catc-846", name: "Full Size Extended Cab (CATC-846)", description: "풀사이즈 확장캡·쿼드캡. 250x80x65, max bed 96in. 773 apps (SuperCab·Double Cab·Quad Cab + Avalanche/Cybertruck/R1T 등 short crew)." },
+      { id: "catc-847", name: "Full Size Crew Cab (CATC-847)", description: "풀사이즈 크루캡. 264x80x65, max bed 96in. 791 apps (SuperCrew·Crew/Mega Cab·CrewMax·Lightning 등). Hummer EV 폭 초과로 제외." },
+    ]},
 ];
 
 function classNames(...classes: (string | false | undefined)[]) {
@@ -264,8 +271,8 @@ function parseBulkParts(text: string): string[] {
 export default function ACESManagerStep1() {
   const [tree, setTree] = useState<Folder[]>(() => {
     try {
-      // v8 bumped when adding the CC3+CC4 combined template
-      const saved = localStorage.getItem("aces_tree_v8");
+      // v9 bumped when adding the Truck Cover (CATC-843..847) templates
+      const saved = localStorage.getItem("aces_tree_v9");
       return saved ? JSON.parse(saved) : DEFAULT_TREE;
     } catch { return DEFAULT_TREE; }
   });

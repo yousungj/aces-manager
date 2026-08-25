@@ -21,6 +21,8 @@ import cc3Aug2026Ids from './data/cc3-aug2026-ids.json';
 import cc4Aug2026Ids from './data/cc4-aug2026-ids.json';
 import cc5Aug2026Ids from './data/cc5-aug2026-ids.json';
 import cc3Cc4Ids from './data/cc3-cc4-ids.json';
+// Truck Cover (CATC) — apps carry BodyType (cab) and optional BedLength refinements
+import catcFitment from './data/truck-cover-catc-fitment.json';
 // Windshield Cover (AS)
 import asSmallIds from './data/as-small-ids.json';
 import asMediumIds from './data/as-medium-ids.json';
@@ -268,3 +270,57 @@ export function buildScFullBench2026Xml(rows: AcesRow[]): string { return buildX
 
 // --- Hubcap ---
 export function buildUma2025Kt16Xml(rows: AcesRow[]): string { return buildXmlFromIds(uma2025Kt16Ids, rows); }
+
+// --- Truck Cover (CATC-843..847) ---
+// Unlike the plain-BV templates above, truck covers depend on cab style, so every
+// app carries a BodyType id (17=Regular, 18=Extended, 22=Crew, 43=Extended Crew
+// Cab Pickup) and, where one model/cab spans multiple bed lengths across the size
+// boundary, a BedLength id. Built from VCdb 2026-05-28, US region.
+type CatcApp = { baseVehicleId: number; bodyTypeId: number; bedLengthId: number | null };
+
+function buildXmlFromCatcApps(appsData: CatcApp[], rows: AcesRow[]): string {
+  const row = rows[0] || { partNumber: '', brandAaiaId: '', partTypeId: '' };
+  const currentDate = new Date().toISOString().split('T')[0];
+  const header = `<?xml version="1.0" encoding="utf-8"?>
+<ACES version="3.2">
+  <Header>
+    <Company>BDK Auto</Company>
+    <SenderName>BDK User</SenderName>
+    <SenderPhone>000-000-0000</SenderPhone>
+    <TransferDate>${currentDate}</TransferDate>
+    <BrandAAIAID>${row.brandAaiaId}</BrandAAIAID>
+    <DocumentTitle>ACES Export</DocumentTitle>
+    <EffectiveDate>${currentDate}</EffectiveDate>
+    <ApprovedFor>US</ApprovedFor>
+    <SubmissionType>FULL</SubmissionType>
+    <VcdbVersionDate>2026-05-28</VcdbVersionDate>
+    <QdbVersionDate>2015-05-26</QdbVersionDate>
+    <PcdbVersionDate>2022-07-08</PcdbVersionDate>
+  </Header>`;
+
+  let appId = 1;
+  const apps: string[] = [];
+  for (const partRow of rows) {
+    for (const a of appsData) {
+      const bed = a.bedLengthId ? `<BedLength id="${a.bedLengthId}" />` : '';
+      apps.push(`  <App action="A" id="${appId}">
+    <BaseVehicle id="${a.baseVehicleId}" /><BodyType id="${a.bodyTypeId}" />${bed}<Note />
+    <Qty>1</Qty>
+    <PartType id="${partRow.partTypeId}" />
+    <Part>${partRow.partNumber}</Part>
+  </App>`);
+      appId++;
+    }
+  }
+
+  const footer = `  <Footer>\n    <RecordCount>${apps.length}</RecordCount>\n  </Footer>`;
+  return header + '\n' + apps.join('\n') + '\n' + footer + '\n</ACES>';
+}
+
+const CATC_FITMENT = catcFitment as Record<string, CatcApp[]>;
+
+export function buildCatc843Xml(rows: AcesRow[]): string { return buildXmlFromCatcApps(CATC_FITMENT['CATC-843'], rows); }
+export function buildCatc844Xml(rows: AcesRow[]): string { return buildXmlFromCatcApps(CATC_FITMENT['CATC-844'], rows); }
+export function buildCatc845Xml(rows: AcesRow[]): string { return buildXmlFromCatcApps(CATC_FITMENT['CATC-845'], rows); }
+export function buildCatc846Xml(rows: AcesRow[]): string { return buildXmlFromCatcApps(CATC_FITMENT['CATC-846'], rows); }
+export function buildCatc847Xml(rows: AcesRow[]): string { return buildXmlFromCatcApps(CATC_FITMENT['CATC-847'], rows); }

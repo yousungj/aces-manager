@@ -145,6 +145,54 @@ async function getItemBySku(accessToken, sku) {
 }
 
 /**
+ * Search the Walmart catalog by UPC to recover the public walmart.com itemId
+ * (the seller Items API often omits it). Best-effort: returns null on any miss.
+ */
+async function catalogItemIdByUpc(accessToken, upc) {
+  if (!upc) return null;
+  const path = `/v3/items/walmart/search?upc=${encodeURIComponent(upc)}`;
+
+  return new Promise((resolve) => {
+    const req = https.request({
+      hostname: WM_API_HOST,
+      path,
+      method: 'GET',
+      headers: {
+        'WM_SEC.ACCESS_TOKEN': accessToken,
+        'WM_SVC.NAME': WM_SVC_NAME,
+        'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+        'Accept': 'application/json'
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const result = JSON.parse(data);
+          resolve(result?.items?.[0]?.itemId || null);
+        } catch {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.end();
+  });
+}
+
+/**
+ * Derive the manufacturer part number used in ACES <Part> from the seller SKU
+ * by stripping a marketplace suffix after the last underscore
+ * (e.g. "CATC-843_WMP1" -> "CATC-843"). Returned as `acesPartNumber` with
+ * derived=true so the UI can label it; the authoritative MPN lives in the
+ * listing's item spec, which the Marketplace API does not expose per-SKU.
+ */
+function derivePartNumber(sku) {
+  const stripped = sku.replace(/_[^_]*$/, '');
+  return stripped && stripped !== sku ? stripped : sku;
+}
+
+/**
  * Map Walmart publishedStatus/lifecycleStatus to a display status,
  * loosely matching the ASIN checker's status vocabulary.
  */
@@ -226,11 +274,16 @@ exports.handler = async (event) => {
       };
     }
 
+    // Seller item payload often lacks the public itemId; recover it via
+    // catalog search on the UPC so the walmart.com link works.
+    const itemId = item.itemId || await catalogItemIdByUpc(accessToken, item.upc || item.gtin);
+
     const response = {
       success: true,
       sku: item.sku || sku,
+      acesPartNumber: derivePartNumber(item.sku || sku),
       wpid: item.wpid || null,           // Walmart item id
-      itemId: item.itemId || null,
+      itemId,
       gtin: item.gtin || null,
       upc: item.upc || null,
       productName: item.productName || 'Unknown',
@@ -241,8 +294,7 @@ exports.handler = async (event) => {
       lifecycleStatus: item.lifecycleStatus || null,
       unpublishedReasons: item.unpublishedReasons?.reason || [],
       status: determineListingStatus(item),
-      itemPageUrl: item.itemId ? `https://www.walmart.com/ip/${item.itemId}` :
-        (item.wpid ? `https://www.walmart.com/ip/${item.wpid}` : null),
+      itemPageUrl: itemId ? `https://www.walmart.com/ip/${itemId}` : null,
       lastChecked: new Date().toISOString()
     };
 

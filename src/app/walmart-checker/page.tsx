@@ -6,6 +6,7 @@ import Link from "next/link";
 type WalmartLookupResult = {
   success: boolean;
   sku: string;
+  acesPartNumber: string | null;
   wpid: string | null;
   itemId: string | number | null;
   gtin: string | null;
@@ -27,6 +28,7 @@ function errorResult(sku: string, message: string): WalmartLookupResult {
   return {
     success: false,
     sku,
+    acesPartNumber: null,
     wpid: null,
     itemId: null,
     gtin: null,
@@ -294,6 +296,7 @@ export default function WalmartChecker() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-1">{result.productName}</h2>
                 <p className="text-gray-500">
                   SKU: <span className="font-mono">{result.sku}</span>
+                  {result.acesPartNumber && <> · MPN/ACES Part#: <button onClick={() => copyText(result.acesPartNumber!, 'single-mpn')} className="font-mono text-blue-600 hover:text-blue-700" title="Click to copy (derived from SKU)">{copiedKey === 'single-mpn' ? '✓ Copied!' : result.acesPartNumber}</button></>}
                   {result.itemId && <> · Item ID: <span className="font-mono">{String(result.itemId)}</span></>}
                   {result.gtin && <> · GTIN: <span className="font-mono">{result.gtin}</span></>}
                 </p>
@@ -337,18 +340,27 @@ export default function WalmartChecker() {
               <h2 className="text-2xl font-semibold text-gray-900">
                 Results ({bulkResults.length})
               </h2>
-              <button
-                onClick={() => copyText(bulkResults.map(r => `${r.sku}\t${r.status}\t${r.productName}`).join('\n'), 'ALL')}
-                className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-              >
-                {copiedKey === 'ALL' ? '✓ Copied!' : 'Copy all as TSV'}
-              </button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => copyText(bulkResults.filter(r => r.acesPartNumber).map(r => r.acesPartNumber).join('\n'), 'ALLMPN')}
+                  className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                >
+                  {copiedKey === 'ALLMPN' ? '✓ Copied!' : 'Copy all MPNs'}
+                </button>
+                <button
+                  onClick={() => copyText(bulkResults.map(r => `${r.sku}\t${r.acesPartNumber || ''}\t${r.status}\t${r.productName}`).join('\n'), 'ALL')}
+                  className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                >
+                  {copiedKey === 'ALL' ? '✓ Copied!' : 'Copy all as TSV'}
+                </button>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-gray-500 border-b border-gray-200">
                     <th className="py-3 pr-4">SKU</th>
+                    <th className="py-3 pr-4">MPN (ACES Part#)</th>
                     <th className="py-3 pr-4">Status</th>
                     <th className="py-3 pr-4">Product</th>
                     <th className="py-3 pr-4">Price</th>
@@ -367,6 +379,17 @@ export default function WalmartChecker() {
                         >
                           {copiedKey === r.sku + i ? '✓ Copied!' : r.sku}
                         </button>
+                      </td>
+                      <td className="py-3 pr-4">
+                        {r.acesPartNumber ? (
+                          <button
+                            onClick={() => copyText(r.acesPartNumber!, 'mpn' + i)}
+                            className="font-mono text-gray-900 hover:text-blue-600"
+                            title="Click to copy (derived from SKU)"
+                          >
+                            {copiedKey === 'mpn' + i ? '✓ Copied!' : r.acesPartNumber}
+                          </button>
+                        ) : '—'}
                       </td>
                       <td className="py-3 pr-4">{renderStatusChip(r)}</td>
                       <td className="py-3 pr-4 text-gray-700 max-w-md truncate" title={getStatusMessage(r)}>

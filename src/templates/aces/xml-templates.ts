@@ -1,11 +1,15 @@
 // Import the pre-extracted BaseVehicle IDs
 import megaSuperIds from './data/mega-super-ids.json';
+import megaSuperSep2026Ids from './data/mega-super-sep2026-ids.json';
 import scWoIhrIds from './data/sc-wo-ihr-ids.json';
 import scWoIhrJun2026Ids from './data/sc-wo-ihr-jun2026-ids.json';
+import scWoIhrSep2026Ids from './data/sc-wo-ihr-sep2026-ids.json';
 import swc15InchIds from './data/swc-15inch-ids.json';
 import swc16InchIds from './data/swc-16inch-ids.json';
 import swc15InchJun2026Ids from './data/swc-15inch-jun2026-ids.json';
 import swc16InchJun2026Ids from './data/swc-16inch-jun2026-ids.json';
+import swc15InchSep2026Ids from './data/swc-15inch-sep2026-ids.json';
+import swc16InchSep2026Ids from './data/swc-16inch-sep2026-ids.json';
 import vc0Ids from './data/vc0-ids.json';
 import vc1Ids from './data/vc1-ids.json';
 import vc2Ids from './data/vc2-ids.json';
@@ -65,6 +69,68 @@ import camt3613Ids from './data/camt-3613-bk-ids.json';
 import camt3624Ids from './data/camt-3624-bk-ids.json';
 import camt3703Ids from './data/camt-3703-bk-ids.json';
 import camt3713Ids from './data/camt-3713-bk-ids.json';
+// Floor Mat (CAMT) — Nov 2026: templates added from the TPS descriptions (VCdb 2026-09-24)
+import camt3111Ids from './data/camt-3111-bk-ids.json';
+import camt3112Ids from './data/camt-3112-bk-ids.json';
+import camt3121Ids from './data/camt-3121-bk-ids.json';
+import camt3122Ids from './data/camt-3122-bk-ids.json';
+import camt3131Ids from './data/camt-3131-bk-ids.json';
+import camt3132Ids from './data/camt-3132-bk-ids.json';
+import camt3148Ids from './data/camt-3148-bk-ids.json';
+import camt3153Ids from './data/camt-3153-bk-ids.json';
+import camt3163Ids from './data/camt-3163-bk-ids.json';
+import camt3173Ids from './data/camt-3173-bk-ids.json';
+import camt3183Ids from './data/camt-3183-bk-ids.json';
+import camt3184Ids from './data/camt-3184-bk-ids.json';
+import camt3193Ids from './data/camt-3193-bk-ids.json';
+import camt3213Ids from './data/camt-3213-bk-ids.json';
+import camt3218Ids from './data/camt-3218-bk-ids.json';
+import camt3223Ids from './data/camt-3223-bk-ids.json';
+import camt3308Ids from './data/camt-3308-bk-ids.json';
+import camt3333Ids from './data/camt-3333-bk-ids.json';
+import camt3334Ids from './data/camt-3334-bk-ids.json';
+import camt3338Ids from './data/camt-3338-bk-ids.json';
+import camt3413Ids from './data/camt-3413-bk-ids.json';
+import camt3414Ids from './data/camt-3414-bk-ids.json';
+import camt3423Ids from './data/camt-3423-bk-ids.json';
+import camt3511Ids from './data/camt-3511-bk-ids.json';
+import camt3512Ids from './data/camt-3512-bk-ids.json';
+import camt3521Ids from './data/camt-3521-bk-ids.json';
+import camt3533Ids from './data/camt-3533-bk-ids.json';
+import camt3534Ids from './data/camt-3534-bk-ids.json';
+import camt3542Ids from './data/camt-3542-bk-ids.json';
+import camt3544Ids from './data/camt-3544-bk-ids.json';
+import camt3604Ids from './data/camt-3604-bk-ids.json';
+import camt3618Ids from './data/camt-3618-bk-ids.json';
+import camt3633Ids from './data/camt-3633-bk-ids.json';
+import camt3634Ids from './data/camt-3634-bk-ids.json';
+import camt3638Ids from './data/camt-3638-bk-ids.json';
+import camt3643Ids from './data/camt-3643-bk-ids.json';
+import camt3644Ids from './data/camt-3644-bk-ids.json';
+import camt3648Ids from './data/camt-3648-bk-ids.json';
+import camt3654Ids from './data/camt-3654-bk-ids.json';
+import camt3655Ids from './data/camt-3655-bk-ids.json';
+import camt3658Ids from './data/camt-3658-bk-ids.json';
+import camt3663Ids from './data/camt-3663-bk-ids.json';
+import camt3664Ids from './data/camt-3664-bk-ids.json';
+import camt3673Ids from './data/camt-3673-bk-ids.json';
+import camt3683Ids from './data/camt-3683-bk-ids.json';
+import camt3693Ids from './data/camt-3693-bk-ids.json';
+import camt3694Ids from './data/camt-3694-bk-ids.json';
+import camt3718Ids from './data/camt-3718-bk-ids.json';
+import camt3724Ids from './data/camt-3724-bk-ids.json';
+import camt3734Ids from './data/camt-3734-bk-ids.json';
+import camt3803Ids from './data/camt-3803-bk-ids.json';
+import camt3904Ids from './data/camt-3904-bk-ids.json';
+import camt3905Ids from './data/camt-3905-bk-ids.json';
+import camt3913Ids from './data/camt-3913-bk-ids.json';
+import camt4104Ids from './data/camt-4104-bk-ids.json';
+import camt4113Ids from './data/camt-4113-bk-ids.json';
+import camt4123Ids from './data/camt-4123-bk-ids.json';
+import camt4135Ids from './data/camt-4135-bk-ids.json';
+import camt4138Ids from './data/camt-4138-bk-ids.json';
+import camt4203Ids from './data/camt-4203-bk-ids.json';
+import camt4303Ids from './data/camt-4303-bk-ids.json';
 // Seat Cover
 import scFronts2026Ids from './data/sc-fronts-reduced-2026-ids.json';
 import scFronts2026JovenIds from './data/sc-fronts-reduced-2026-joven-ids.json';
@@ -128,6 +194,11 @@ export function buildMegaSuperXml(rows: AcesRow[]): string {
   return buildXmlFromIds(megaSuperIds, rows);
 }
 
+// Sep 2026 update — synced to VCdb 2026-09-24: new 2024-2027 mainstream BVs, short year-gap fills, stale IDs removed
+export function buildMegaSuperSep2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(megaSuperSep2026Ids, rows);
+}
+
 export function buildScWoIhrXml(rows: AcesRow[]): string {
   return buildXmlFromIds(scWoIhrIds, rows);
 }
@@ -135,6 +206,11 @@ export function buildScWoIhrXml(rows: AcesRow[]): string {
 // Jun 2026 update — deduped + 572 new BVs (existing-model new years + selected popular non-IHR models)
 export function buildScWoIhrJun2026Xml(rows: AcesRow[]): string {
   return buildXmlFromIds(scWoIhrJun2026Ids, rows);
+}
+
+// Sep 2026 update — Jun 2026 list + newly cataloged years (VCdb 2026-09-24) for existing models only, stale IDs removed
+export function buildScWoIhrSep2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(scWoIhrSep2026Ids, rows);
 }
 
 export function buildSwc15InchXml(rows: AcesRow[]): string {
@@ -152,6 +228,15 @@ export function buildSwc15InchJun2026Xml(rows: AcesRow[]): string {
 
 export function buildSwc16InchJun2026Xml(rows: AcesRow[]): string {
   return buildXmlFromIds(swc16InchJun2026Ids, rows);
+}
+
+// Sep 2026 update — Jun 2026 lists + new model-years from VCdb 2026-09-24, steering wheel size re-checked
+export function buildSwc15InchSep2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(swc15InchSep2026Ids, rows);
+}
+
+export function buildSwc16InchSep2026Xml(rows: AcesRow[]): string {
+  return buildXmlFromIds(swc16InchSep2026Ids, rows);
 }
 
 export function buildVc0Xml(rows: AcesRow[]): string {
@@ -262,6 +347,67 @@ export function buildCamt3613Xml(rows: AcesRow[]): string { return buildXmlFromI
 export function buildCamt3624Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3624Ids, rows); }
 export function buildCamt3703Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3703Ids, rows); }
 export function buildCamt3713Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3713Ids, rows); }
+export function buildCamt3111Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3111Ids, rows); }
+export function buildCamt3112Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3112Ids, rows); }
+export function buildCamt3121Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3121Ids, rows); }
+export function buildCamt3122Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3122Ids, rows); }
+export function buildCamt3131Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3131Ids, rows); }
+export function buildCamt3132Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3132Ids, rows); }
+export function buildCamt3148Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3148Ids, rows); }
+export function buildCamt3153Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3153Ids, rows); }
+export function buildCamt3163Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3163Ids, rows); }
+export function buildCamt3173Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3173Ids, rows); }
+export function buildCamt3183Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3183Ids, rows); }
+export function buildCamt3184Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3184Ids, rows); }
+export function buildCamt3193Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3193Ids, rows); }
+export function buildCamt3213Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3213Ids, rows); }
+export function buildCamt3218Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3218Ids, rows); }
+export function buildCamt3223Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3223Ids, rows); }
+export function buildCamt3308Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3308Ids, rows); }
+export function buildCamt3333Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3333Ids, rows); }
+export function buildCamt3334Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3334Ids, rows); }
+export function buildCamt3338Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3338Ids, rows); }
+export function buildCamt3413Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3413Ids, rows); }
+export function buildCamt3414Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3414Ids, rows); }
+export function buildCamt3423Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3423Ids, rows); }
+export function buildCamt3511Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3511Ids, rows); }
+export function buildCamt3512Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3512Ids, rows); }
+export function buildCamt3521Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3521Ids, rows); }
+export function buildCamt3533Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3533Ids, rows); }
+export function buildCamt3534Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3534Ids, rows); }
+export function buildCamt3542Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3542Ids, rows); }
+export function buildCamt3544Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3544Ids, rows); }
+export function buildCamt3604Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3604Ids, rows); }
+export function buildCamt3618Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3618Ids, rows); }
+export function buildCamt3633Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3633Ids, rows); }
+export function buildCamt3634Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3634Ids, rows); }
+export function buildCamt3638Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3638Ids, rows); }
+export function buildCamt3643Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3643Ids, rows); }
+export function buildCamt3644Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3644Ids, rows); }
+export function buildCamt3648Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3648Ids, rows); }
+export function buildCamt3654Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3654Ids, rows); }
+export function buildCamt3655Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3655Ids, rows); }
+export function buildCamt3658Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3658Ids, rows); }
+export function buildCamt3663Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3663Ids, rows); }
+export function buildCamt3664Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3664Ids, rows); }
+export function buildCamt3673Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3673Ids, rows); }
+export function buildCamt3683Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3683Ids, rows); }
+export function buildCamt3693Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3693Ids, rows); }
+export function buildCamt3694Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3694Ids, rows); }
+export function buildCamt3718Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3718Ids, rows); }
+export function buildCamt3724Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3724Ids, rows); }
+export function buildCamt3734Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3734Ids, rows); }
+export function buildCamt3803Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3803Ids, rows); }
+export function buildCamt3904Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3904Ids, rows); }
+export function buildCamt3905Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3905Ids, rows); }
+export function buildCamt3913Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt3913Ids, rows); }
+export function buildCamt4104Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4104Ids, rows); }
+export function buildCamt4113Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4113Ids, rows); }
+export function buildCamt4123Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4123Ids, rows); }
+export function buildCamt4135Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4135Ids, rows); }
+export function buildCamt4138Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4138Ids, rows); }
+export function buildCamt4203Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4203Ids, rows); }
+export function buildCamt4303Xml(rows: AcesRow[]): string { return buildXmlFromIds(camt4303Ids, rows); }
 
 // --- Seat Cover ---
 export function buildScFronts2026Xml(rows: AcesRow[]): string { return buildXmlFromIds(scFronts2026Ids, rows); }

@@ -8,6 +8,7 @@ import { processVehicleData, searchVehicles } from "../../lib/vehicle-data";
 const BRAND_OPTIONS = [
   { code: "DGQS", name: "Motor Trend" },
   { code: "JZXV", name: "CAT" },
+  { code: "BVTL", name: "Caterpillar" },
   { code: "GFLT", name: "BDK" },
   { code: "JZBF", name: "Motor Box" },
   { code: "JNLD", name: "Carbella" },
